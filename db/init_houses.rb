@@ -1,17 +1,19 @@
 require_relative 'db_connect'
-require_relative '../lib/house'
-require_relative '../lib/alliance'
+require_relative '../lib/h_house'
+require_relative '../lib/al_alliance'
 
 # migration.rb first (one time)
 
-stark = House.find_or_create_by!( code_name: :stark )
-karstark = stark.vassals.find_or_create_by!( code_name: :karstark )
+HHouse.destroy_all
 
-lannister= House.find_or_create_by!( code_name: :lannister)
-cendermark = lannister.vassals.find_or_create_by!( code_name: :cendermark )
+stark = HHouse.create_house( :stark )
+stark.create_vassal( :karstark )
 
-tyrell = House.find_or_create_by!( code_name: :tyrell )
-treille = tyrell.vassals.find_or_create_by!( code_name: :treille )
+lannister = HHouse.create_house( :lannister )
+lannister.create_vassal( :cendermark )
 
-Alliance.create( house: stark, ally: lannister )
+tyrell = HHouse.create_house( :tyrell )
+tyrell.create_vassal( :treille )
+
+# stark.create_alliance( tyrell )
 

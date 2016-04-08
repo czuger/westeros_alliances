@@ -1,8 +1,9 @@
 require_relative 'db/db_connect'
-require_relative 'lib/house'
-require_relative 'lib/alliance'
+require_relative 'lib/h_house'
+require_relative 'lib/al_alliance'
 require 'pp'
 
-pp House.first.vassals
+pp HHouse.first.vassals
 
-pp House.first.allies
+pp HHouse.find_by_code_name( ).allies
+pp HHouse.all[1 ].allies
