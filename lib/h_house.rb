@@ -33,31 +33,30 @@ class HHouse < ActiveRecord::Base
     !vassal?
   end
 
+  def allied?( house )
+    AlAlliance.where( h_house_id: id, peer_house_id: house.id ).count >= 1
+  end
+
   def create_alliance( house )
     [ self, house ].each do |h|
-      raise "#{self.class}##{__method__} : #{h} not suzerain" if h.vassal?
-      raise "#{self.class}##{__method__} : #{h} not suzerain" if h.vassal?
+      raise "#{self.class}##{__method__} : #{self.inspect} not suzerain" if vassal?
+      raise "#{self.class}##{__method__} : #{h.inspect} not suzerain" if h.vassal?
+      raise "#{self.class}##{__method__} : #{self.inspect} minor alliance member" if alliance_master_id != id
     end
 
     all_allies = ( [ self ] + alliance_members + [ house ] + house.vassals ).uniq
     all_ally_ids = all_allies.map{ |e| e.id }
 
-    # This way require a reload for each ally to take account of the alliance_master_id, so not very efficient
-    # self.alliance_subject_ids = all_ally_ids - [ id ]
+    self.alliance_member_ids = all_ally_ids
 
     all_allies.each do |ally|
       ally.ally_ids = all_ally_ids - [ ally.id ]
-
-      # Updating alliance_master_id directly prevent the need of reloading
-      # We say that the master of the alliance also have a master id : himself
-      # Which mean that he is also member of it's own alliance
-      ally.update_attribute( :alliance_master_id, id )
-      # ally.reload # required to have the master_alliance_status
     end
   end
 
-  def in_alliance_as_minor_member()
-    AlAlliance.find_by( h_house_id: id ) != nil
-  end
+  # # Alliances group for display
+  # def self.alliances_groups
+  #   HHouse.all.group_by( &:alliance_master )
+  # end
 
 end
