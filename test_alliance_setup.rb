@@ -29,10 +29,10 @@ class TestAllianceSetup < Minitest::Test
     @gbp.create_alliance( @stark, @lannister )
     @gbp.create_alliance( @stark, @greyjoy )
     @gbp.create_alliance( @tyrell, @greyjoy )
-    assert @cendermark.allied?( @gbp, @stark )
-    refute @pyk.allied?( @gbp, @cendermark )
-    refute @pyk.allied?( @gbp, @stark )
-    assert @pyk.allied?( @gbp, @tarly )
+    assert @gbp.allied?( @cendermark, @stark )
+    refute @gbp.allied?( @pyk, @cendermark )
+    refute @gbp.allied?( @pyk, @stark )
+    assert @gbp.allied?( @pyk, @tarly )
   end
 
   def test_advanced_alliances
@@ -41,10 +41,10 @@ class TestAllianceSetup < Minitest::Test
     assert_raises {
       @gbp.create_alliance( @lannister, @tyrell )
     }
-    assert @cendermark.allied?( @gbp, @stark )
-    assert @pyk.allied?( @gbp, @cendermark )
-    assert @pyk.allied?( @gbp, @stark )
-    refute @pyk.allied?( @gbp, @tarly )
+    assert @gbp.allied?( @cendermark, @stark )
+    assert @gbp.allied?( @pyk, @cendermark )
+    assert @gbp.allied?( @pyk, @stark )
+    refute @gbp.allied?( @pyk, @tarly )
   end
 
   def test_basic_alliances
@@ -55,12 +55,12 @@ class TestAllianceSetup < Minitest::Test
       @gbp.create_alliance( @cendermark, @stark )
     }
     @gbp.create_alliance( @stark, @lannister )
-    assert @stark.allied?( @gbp, @cendermark )
-    assert @cendermark.allied?( @gbp, @stark )
-    assert @karstark.allied?( @gbp, @cendermark )
+    assert @gbp.allied?( @stark, @cendermark )
+    assert @gbp.allied?( @cendermark, @stark )
+    assert @gbp.allied?( @karstark, @cendermark )
     assert_equal(
       [ @lannister, @cendermark, @karstark ].sort{ |x, y| x.code_name <=> y.code_name },
-      @stark.allies( @gbp ).sort{ |x, y| x.code_name <=> y.code_name }
+      @gbp.allies( @stark ).sort{ |x, y| x.code_name <=> y.code_name }
     )
   end
 

@@ -24,16 +24,4 @@ class HHouse < ActiveRecord::Base
     !vassal?
   end
 
-  def allied?( gbp, house )
-    AlAlliance.where( g_game_board_player_id: gbp.id, h_house_id: id, peer_house_id: house.id ).count >= 1
-  end
-
-  def allies( gbp )
-    alliance_members( gbp )
-  end
-
-  def alliance_members( gbp )
-    AlAlliance.where( g_game_board_player_id: gbp.id, h_house_id: id ).map{ |e| e.peer_house }
-  end
-
 end
