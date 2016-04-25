@@ -30,10 +30,10 @@ ActiveRecord::Schema.define do
   create_table :al_houses do |table|
     table.references :g_game_board_player, null: false
     table.references :h_house, null: false
-    table.references :alliance_master
+    table.boolean :minor_alliance_member, default: false
     table.timestamps
   end
-  add_index :al_houses, [ :g_game_board_player_id, :h_house_id, :alliance_master_id ], unique: true, :name => 'al_houses_unique_index'
+  add_index :al_houses, [ :g_game_board_player_id, :h_house_id ], unique: true, :name => 'al_houses_unique_index'
 
 
   # create_table :al_neutrals do |table|

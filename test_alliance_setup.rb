@@ -16,9 +16,10 @@ class TestAllianceSetup < Minitest::Test
     @lannister = HHouse.find_by_code_name( :lannister )
     @cendermark = HHouse.find_by_code_name( :cendermark )
     @karstark = HHouse.find_by_code_name( :karstark )
-    @greyjoy= HHouse.find_by_code_name( :greyjoy)
-    @tyrell= HHouse.find_by_code_name( :tyrell)
-    @pyk= HHouse.find_by_code_name( :pyk)
+    @greyjoy = HHouse.find_by_code_name( :greyjoy )
+    @tyrell = HHouse.find_by_code_name( :tyrell )
+    @pyk = HHouse.find_by_code_name( :pyk )
+    @tarly = HHouse.find_by_code_name( :tarly )
   end
 
   # def test_alliances_group
@@ -30,8 +31,8 @@ class TestAllianceSetup < Minitest::Test
     @gbp.create_alliance( @stark, @greyjoy )
     @gbp.create_alliance( @tyrell, @greyjoy )
     assert @gbp.allied?( @cendermark, @stark )
-    refute @gbp.allied?( @pyk, @cendermark )
     refute @gbp.allied?( @pyk, @stark )
+    refute @gbp.allied?( @pyk, @cendermark )
     assert @gbp.allied?( @pyk, @tarly )
   end
 

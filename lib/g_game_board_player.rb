@@ -1,5 +1,6 @@
 require 'active_record'
 require_relative 'al_alliance'
+require_relative 'al_house'
 
 class GGameBoardPlayer < ActiveRecord::Base
 
@@ -17,25 +18,45 @@ class GGameBoardPlayer < ActiveRecord::Base
     AlAlliance.where( g_game_board_player_id: id, h_house_id: house.id ).map{ |e| e.peer_house }
   end
 
+  # Check if a house is a minor alliance member
+  def minor_alliance_member?( house )
+    al_house = AlHouse.find_by( g_game_board_player_id: id, h_house_id: house.id )
+    al_house && al_house.minor_alliance_member
+  end
+
   def create_alliance( house_a, house_b )
     [ house_a, house_b ].each do |h|
       raise "#{self.class}##{__method__} : #{h.inspect} not suzerain" if h.vassal?
-      # raise "#{self.class}##{__method__} : #{self.inspect} minor alliance member" if alliance_master_id != id
     end
 
-    all_allies = ( [ house_a ] + house_a.vassals + alliance_members( house_a ) + [ house_b ] + house_b.vassals ).uniq
+    raise "#{self.class}##{__method__} : #{house_a.inspect} minor alliance member" if minor_alliance_member?( house_a )
 
-    all_allies.each do |ally_m|
-      all_allies.each do |ally_p|
-        next if ally_m == ally_p
-        alliance = AlAlliance.where( g_game_board_player_id: id, h_house_id: ally_m.id ).find_or_initialize_by( peer_house_id: ally_p.id ) do |a|
-          a.g_game_board_player_id = id
-          a.h_house_id = ally_m.id
+    minor_allies = ( [ house_b ] + house_b.vassals ).uniq
+    all_allies = ( [ house_a ] + house_a.vassals + alliance_members( house_a ) + minor_allies ).uniq
+
+    ActiveRecord::Base.transaction do
+
+      # master_house is marked as a minor alliance member (thus cant't ever be a master member)
+      AlHouse.where( g_game_board_player_id: id ).find_or_create_by!( h_house_id: house_b.id ) do |al_house|
+        al_house.minor_alliance_member = true
+      end
+
+      # We need to delete the current alliances of the minor house and all vassals
+      AlAlliance.where( g_game_board_player_id: id, h_house_id: minor_allies.map{ |a| a.id } ).delete_all
+
+      all_allies.each do |ally_m|
+        all_allies.each do |ally_p|
+          next if ally_m == ally_p
+          alliance = AlAlliance.where( g_game_board_player_id: id, h_house_id: ally_m.id ).find_or_initialize_by( peer_house_id: ally_p.id ) do |a|
+            a.g_game_board_player_id = id
+            a.h_house_id = ally_m.id
+          end
+          alliance.peer_house_id = ally_p.id
+          alliance.save!
         end
-        alliance.peer_house_id = ally_p.id
-        alliance.save!
       end
     end
+
   end
 
 end
