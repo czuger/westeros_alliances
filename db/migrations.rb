@@ -6,6 +6,7 @@ ActiveRecord::Schema.define do
   drop_table :h_houses if ActiveRecord::Base.connection.table_exists? :h_houses
   drop_table :al_alliances if ActiveRecord::Base.connection.table_exists? :al_alliances
   drop_table :al_houses if ActiveRecord::Base.connection.table_exists? :al_houses
+  drop_table :al_bets if ActiveRecord::Base.connection.table_exists? :al_bets
   # drop_table :al_neutrals
 
   create_table :g_game_board_players do |table|
@@ -35,6 +36,14 @@ ActiveRecord::Schema.define do
   end
   add_index :al_houses, [ :g_game_board_player_id, :h_house_id ], unique: true, :name => 'al_houses_unique_index'
 
+  create_table :al_bets do |table|
+    table.references :g_game_board_player, null: false
+    table.references :h_master_house, null: false
+    table.references :h_target_house, null: false
+    table.integer :bet, null: false, default: 0
+    table.timestamps
+  end
+  add_index :al_bets, [ :g_game_board_player_id, :h_master_house_id, :h_target_house_id  ], unique: true, :name => 'al_bets_unique_index'
 
   # create_table :al_neutrals do |table|
   #   table.column :h_house_id, :reference, null: false

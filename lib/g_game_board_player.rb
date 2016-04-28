@@ -1,19 +1,26 @@
 require 'active_record'
 require_relative 'al_alliance'
 require_relative 'al_house'
+require_relative 'alliances_engine/g_alliances_bet_engine'
+require_relative 'assert'
 
 class GGameBoardPlayer < ActiveRecord::Base
 
   has_many :al_alliances, dependent: :destroy
 
+  include GAlliancesBetEngine
+
+  # True if two houses are allied
   def allied?( house_a, house_b )
     AlAlliance.where( g_game_board_player_id: id, h_house_id: house_a.id, peer_house_id: house_b.id ).count >= 1
   end
 
+  # Synonym for alliance_members
   def allies( house )
     alliance_members( house )
   end
 
+  # Return all the alliance members for a given house
   def alliance_members( house )
     AlAlliance.where( g_game_board_player_id: id, h_house_id: house.id ).map{ |e| e.peer_house }
   end
@@ -24,6 +31,7 @@ class GGameBoardPlayer < ActiveRecord::Base
     al_house && al_house.minor_alliance_member
   end
 
+  # Create an alliance between two houses
   def create_alliance( house_a, house_b )
     [ house_a, house_b ].each do |h|
       raise "#{self.class}##{__method__} : #{h.inspect} not suzerain" if h.vassal?
@@ -56,7 +64,5 @@ class GGameBoardPlayer < ActiveRecord::Base
         end
       end
     end
-
   end
-
 end

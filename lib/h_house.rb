@@ -1,6 +1,7 @@
 require 'active_record'
 require_relative 'al_alliance'
 
+# This class store a house, this is the base definition of a house and is game board independent
 class HHouse < ActiveRecord::Base
 
   has_many :vassals, class_name: HHouse, foreign_key: :suzerain_id
