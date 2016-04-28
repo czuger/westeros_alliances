@@ -1,3 +1,5 @@
+require 'minitest/autorun'
+
 require_relative '../db/db_connect'
 require_relative '../lib/h_house'
 require_relative '../lib/al_alliance'
@@ -5,13 +7,6 @@ require_relative '../lib/g_game_board_player'
 require 'pp'
 
 require_relative '../db/init_houses'
-
-require 'simplecov'
-SimpleCov.start
-
-require 'minitest/autorun'
-
-# TODO : move the tests files to the test directory, but get an error
 
 class TestAllianceSetup < Minitest::Test
 

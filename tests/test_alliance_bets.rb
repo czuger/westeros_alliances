@@ -1,7 +1,3 @@
-require 'simplecov'
-SimpleCov.start
-SimpleCov.root( '/mnt/hdd1/ced/ruby/feodalis/' )
-
 require 'minitest/autorun'
 
 require_relative '../db/db_connect'
