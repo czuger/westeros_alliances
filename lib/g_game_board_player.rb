@@ -28,7 +28,7 @@ class GGameBoardPlayer < ActiveRecord::Base
   # Check if a house is a minor alliance member
   def minor_alliance_member?( house )
     al_house = AlHouse.find_by( g_game_board_player_id: id, h_house_id: house.id )
-    al_house && al_house.minor_alliance_member
+    al_house&.minor_alliance_member
   end
 
   # Create an alliance between two houses
@@ -55,12 +55,7 @@ class GGameBoardPlayer < ActiveRecord::Base
       all_allies.each do |ally_m|
         all_allies.each do |ally_p|
           next if ally_m == ally_p
-          alliance = AlAlliance.where( g_game_board_player_id: id, h_house_id: ally_m.id ).find_or_initialize_by( peer_house_id: ally_p.id ) do |a|
-            a.g_game_board_player_id = id
-            a.h_house_id = ally_m.id
-          end
-          alliance.peer_house_id = ally_p.id
-          alliance.save!
+          AlAlliance.where( g_game_board_player_id: id, h_house_id: ally_m.id ).find_or_create_by!( peer_house_id: ally_p.id )
         end
       end
     end

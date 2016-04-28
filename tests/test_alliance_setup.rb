@@ -65,6 +65,11 @@ class TestAllianceSetup < Minitest::Test
       [ @lannister, @cendermark, @karstark ].sort{ |x, y| x.code_name <=> y.code_name },
       @gbp.allies( @stark ).sort{ |x, y| x.code_name <=> y.code_name }
     )
+
+    refute( @gbp.minor_alliance_member?( @stark ) )
+    refute( @gbp.minor_alliance_member?( @tarly ) )
+
+    assert( @gbp.minor_alliance_member?( @cendermark ) )
   end
 
   def test_vassal_suzerain
