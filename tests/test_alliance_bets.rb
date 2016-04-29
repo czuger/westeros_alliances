@@ -28,6 +28,20 @@ class TestAllianceBets < Minitest::Test
   #   pp HHouse.alliances_groups
   # end
 
+  def test_bet_resolutions
+    @gbp.set_bet( @stark, @lannister, 10 )
+    @gbp.set_bet( @greyjoy, @lannister, 20 )
+    @gbp.set_bet( @greyjoy, @tyrell, 20 )
+    @gbp.resolve_bets
+    assert @gbp.allied?( @greyjoy, @lannister )
+    assert @gbp.allied?( @greyjoy, @tyrell )
+    refute @gbp.allied?( @lannister, @stark )
+
+    @gbp.set_bet( @stark, @lannister, 40 )
+    @gbp.resolve_bets
+    assert @gbp.allied?( @lannister, @stark )
+  end
+
   def test_bet_creation_and_replacement
     @gbp.set_bet( @stark, @lannister, 10 )
     assert( 10, @gbp.get_bet( @stark, @lannister ) )
@@ -46,7 +60,6 @@ class TestAllianceBets < Minitest::Test
     assert_raises RuntimeError do
       @gbp.set_bet( @stark, @tarly, 30 )
     end
-
   end
 
 end
