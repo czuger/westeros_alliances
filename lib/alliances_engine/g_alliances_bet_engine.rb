@@ -5,6 +5,8 @@ module GAlliancesBetEngine
 
   include Assert
 
+  # TODO : add a method to resolve bets
+
   # Set a new bet on a house, if the bet already exist, it is replaced
   def set_bet( master_house, target_house, bet )
     # Only suzerain can make alliances

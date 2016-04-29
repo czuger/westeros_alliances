@@ -7,6 +7,8 @@ require_relative 'assert'
 class GGameBoardPlayer < ActiveRecord::Base
 
   has_many :al_alliances, dependent: :destroy
+  has_many :al_houses, dependent: :destroy
+  has_many :al_bets, dependent: :destroy
 
   include GAlliancesBetEngine
 
@@ -44,9 +46,12 @@ class GGameBoardPlayer < ActiveRecord::Base
 
     ActiveRecord::Base.transaction do
 
-      # master_house is marked as a minor alliance member (thus cant't ever be a master member)
-      AlHouse.where( g_game_board_player_id: id ).find_or_create_by!( h_house_id: house_b.id ) do |al_house|
-        al_house.minor_alliance_member = true
+      # master_house and all it's vassals are marked as a minor alliance member (thus cant't ever be a master member)
+      # Minor are included for coherence
+      minor_allies.each do |ally|
+        AlHouse.where( g_game_board_player_id: id ).find_or_create_by!( h_house_id: ally.id ) do |al_house|
+          al_house.minor_alliance_member = true
+        end
       end
 
       # We need to delete the current alliances of the minor house and all vassals

@@ -7,3 +7,5 @@ gem 'sqlite3'
 gem 'activerecord'
 gem 'simplecov'
 gem 'simplecov-html'
+
+gem "codeclimate-test-reporter", group: :test, require: nil
