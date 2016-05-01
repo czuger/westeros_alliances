@@ -28,6 +28,21 @@ class TestAllianceBets < Minitest::Test
   #   pp HHouse.alliances_groups
   # end
 
+  def test_bet_failure_due_to_low_bet
+    @gbp.set_bet( @stark, @lannister, 10 )
+    @gbp.resolve_bets
+
+    @gbp.set_bet( @greyjoy, @lannister, 10 )
+    @gbp.resolve_bets
+    # Geryjoy shouldn't be able to steal alliance due to low bet
+    assert @gbp.allied?( @lannister, @stark )
+
+    @gbp.set_bet( @greyjoy, @lannister, 20 )
+    @gbp.resolve_bets
+    # But now it is ok, because the bet is good enough
+    assert @gbp.allied?( @greyjoy, @lannister )
+  end
+
   def test_bet_resolutions
     @gbp.set_bet( @stark, @lannister, 10 )
     @gbp.set_bet( @greyjoy, @lannister, 20 )

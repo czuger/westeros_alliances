@@ -22,7 +22,7 @@ module GAllianceCoreEngine
   end
 
   # Create an alliance between two houses
-  def create_alliance( house_a, house_b )
+  def create_alliance( house_a, house_b, last_bet )
     [ house_a, house_b ].each do |h|
       raise "#{self.class}##{__method__} : #{h.inspect} not suzerain" if h.vassal?
     end
@@ -37,9 +37,10 @@ module GAllianceCoreEngine
       # master_house and all it's vassals are marked as a minor alliance member (thus cant't ever be a master member)
       # Minor are included for coherence
       minor_allies.each do |ally|
-        AlHouse.where( g_game_board_player_id: id ).find_or_create_by!( h_house_id: ally.id ) do |al_house|
-          al_house.minor_alliance_member = true
-        end
+        al_house = AlHouse.where( g_game_board_player_id: id ).find_or_initialize_by( h_house_id: ally.id )
+        al_house.minor_alliance_member = true
+        al_house.last_bet = last_bet
+        al_house.save!
       end
 
       # We need to delete the current alliances of the minor house and all vassals

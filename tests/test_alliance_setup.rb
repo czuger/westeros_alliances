@@ -29,9 +29,9 @@ class TestAllianceSetup < Minitest::Test
   # end
 
   def test_alliances_stealing
-    @gbp.create_alliance( @stark, @lannister )
-    @gbp.create_alliance( @stark, @greyjoy )
-    @gbp.create_alliance( @tyrell, @greyjoy )
+    @gbp.create_alliance( @stark, @lannister, 0 )
+    @gbp.create_alliance( @stark, @greyjoy, 0 )
+    @gbp.create_alliance( @tyrell, @greyjoy, 0 )
     assert @gbp.allied?( @cendermark, @stark )
     refute @gbp.allied?( @pyk, @stark )
     refute @gbp.allied?( @pyk, @cendermark )
@@ -39,10 +39,10 @@ class TestAllianceSetup < Minitest::Test
   end
 
   def test_advanced_alliances
-    @gbp.create_alliance( @stark, @lannister )
-    @gbp.create_alliance( @stark, @greyjoy )
+    @gbp.create_alliance( @stark, @lannister, 0 )
+    @gbp.create_alliance( @stark, @greyjoy, 0 )
     assert_raises {
-      @gbp.create_alliance( @lannister, @tyrell )
+      @gbp.create_alliance( @lannister, @tyrell, 0 )
     }
     assert @gbp.allied?( @cendermark, @stark )
     assert @gbp.allied?( @pyk, @cendermark )
@@ -52,12 +52,12 @@ class TestAllianceSetup < Minitest::Test
 
   def test_basic_alliances
     assert_raises {
-      @gbp.create_alliance( @stark, @cendermark )
+      @gbp.create_alliance( @stark, @cendermark, 0 )
     }
     assert_raises {
-      @gbp.create_alliance( @cendermark, @stark )
+      @gbp.create_alliance( @cendermark, @stark, 0 )
     }
-    @gbp.create_alliance( @stark, @lannister )
+    @gbp.create_alliance( @stark, @lannister, 0 )
     assert @gbp.allied?( @stark, @cendermark )
     assert @gbp.allied?( @cendermark, @stark )
     assert @gbp.allied?( @karstark, @cendermark )

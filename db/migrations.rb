@@ -32,6 +32,7 @@ ActiveRecord::Schema.define do
     table.references :g_game_board_player, null: false
     table.references :h_house, null: false
     table.boolean :minor_alliance_member, default: false
+    table.integer :last_bet, null: false
     table.timestamps
   end
   add_index :al_houses, [ :g_game_board_player_id, :h_house_id ], unique: true, :name => 'al_houses_unique_index'
