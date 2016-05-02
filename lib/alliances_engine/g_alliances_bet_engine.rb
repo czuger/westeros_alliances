@@ -20,7 +20,7 @@ module GAlliancesBetEngine
 
   # Set a new bet on a house, if the bet already exist, it is replaced
   def resolve_bets
-    old_bet = 0 # In the future, this wille be the old bet kept
+    old_bet = 1 # In the future, this wille be the old bet kept
     AlBet.where( g_game_board_player_id: id ).distinct.pluck( :h_target_house_id ).each do |target_house_id|
       best_bet = AlBet.where( g_game_board_player_id: id, h_target_house_id: target_house_id )
         .where( 'bet > ?', old_bet * OLD_BET_MUL ).order( 'bet DESC' ).first
