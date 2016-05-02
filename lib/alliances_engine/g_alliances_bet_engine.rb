@@ -8,11 +8,15 @@ module GAlliancesBetEngine
   # The new bet must be at least OLD_BET_MUL time the old one
   OLD_BET_MUL = 2
 
+  # TODO : Create a log that keep all alliances movement, create a log table for alliances issues only (don't mix all logs)
+  #  - Alliances créations
+  #  - Alliances changes
+  #  - Alliances stealings
+  #  - Alliances rejected
+  #  All logs are stored in table as tuples ( game_board, house_asking, house_target, status, bet, min_bet )
+  #  Status is an integer
+
   # TODO : pluginize with : http://guides.rubyonrails.org/plugins.html
-
-  # TODO : add an enemy table
-
-  # TODO : Create a method that give, for one house : all allies (done), all ennemies, all neutrals
 
   # Set a new bet on a house, if the bet already exist, it is replaced
   def resolve_bets
