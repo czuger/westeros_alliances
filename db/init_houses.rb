@@ -7,7 +7,6 @@ require 'pp'
 
 HHouse.destroy_all
 
-HHouse.destroy_all
 @stark = HHouse.create_house( :stark )
 @karstark = @stark.create_vassal( :karstark )
 

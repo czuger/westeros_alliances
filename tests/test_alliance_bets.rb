@@ -6,8 +6,6 @@ require_relative '../lib/al_alliance'
 require_relative '../lib/g_game_board_player'
 require 'pp'
 
-require_relative '../db/init_houses'
-
 class TestAllianceBets < Minitest::Test
 
   def setup
