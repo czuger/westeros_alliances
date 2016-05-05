@@ -26,6 +26,13 @@ class TestAllianceSetup < Minitest::Test
   #   pp HHouse.alliances_groups
   # end
 
+  def test_alliance_separation_through_game_board
+    @gbp.create_alliance( @stark, @lannister, 0 )
+    assert @gbp.allied?( @cendermark, @stark )
+    @gbp2 = GGameBoardPlayer.create!
+    refute @gbp2.allied?( @cendermark, @stark )
+  end
+
   def test_alliances_stealing
     @gbp.create_alliance( @stark, @lannister, 0 )
     @gbp.create_alliance( @stark, @greyjoy, 0 )
