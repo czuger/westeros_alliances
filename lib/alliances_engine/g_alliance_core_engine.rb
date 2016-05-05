@@ -11,11 +11,13 @@ module GAllianceCoreEngine
   end
 
   # Return all the alliance members for a given house
+  # TODO : try to use merge to avoid map http://www.mitchcrowe.com/10-most-underused-activerecord-relation-methods/
   def alliance_members( house )
     al_alliances.where( h_house_id: house.id ).map{ |e| e.h_peer_house }
   end
 
   # Check if a house is a minor alliance member
+  # This is required, because a minor alliance member can't initiate an alliance or declare war
   def minor_alliance_member?( house )
     al_house = al_houses.find_by( h_house_id: house.id )
     al_house&.minor_alliance_member
@@ -23,19 +25,24 @@ module GAllianceCoreEngine
 
   # Create an alliance between two houses
   def create_alliance( house_a, house_b, last_bet )
-
-    # TODO : neet to remove the ennemy status, in case of alliance creation + tests
-
-    [ house_a, house_b ].each do |h|
-      raise "#{self.class}##{__method__} : #{h.inspect} not suzerain" if h.vassal?
-    end
-
-    raise "#{self.class}##{__method__} : #{house_a.inspect} minor alliance member" if minor_alliance_member?( house_a )
+    can_negotiate?( house_a, house_b )
 
     minor_allies = ( [ house_b ] + house_b.vassals ).uniq
     all_allies = ( [ house_a ] + house_a.vassals + alliance_members( house_a ) + minor_allies ).uniq
 
     ActiveRecord::Base.transaction do
+
+      all_allies_ids = all_allies.map{ |e| e.id }
+      new_allies_ids = ( [ house_b ] + house_b.vassals ).map( &:id ).uniq
+
+      al_enemies.where( h_house_id: all_allies_ids, h_enemy_house_id: new_allies_ids ).delete_all
+      al_enemies.where( h_house_id: new_allies_ids, h_enemy_house_id: all_allies_ids ).delete_all
+
+      # TODO : setup new ennemies according to newly forged alliance
+      # TODO ; merge ennemies and alliances in one table
+      # Use a flag : ennemies : if true, then alliance is broken and they are ennemies, otherwise, they are allies
+      # This will help alliance stealing, ennemies will just have to change a flag.
+      # Also, will prohibit having enemies and allies
 
       # master_house and all it's vassals are marked as a minor alliance member (thus cant't ever be a master member)
       # Minor are included for coherence
@@ -56,9 +63,6 @@ module GAllianceCoreEngine
         end
       end
 
-      all_allies_ids = all_allies.map{ |e| e.id }
-      al_enemies.where( h_house_id: all_allies_ids ).delete_all
-      al_enemies.where( h_enemy_house_id: all_allies_ids ).delete_all
     end
   end
 

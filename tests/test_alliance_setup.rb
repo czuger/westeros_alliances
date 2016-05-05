@@ -43,6 +43,15 @@ class TestAllianceSetup < Minitest::Test
     assert @gbp.allied?( @pyk, @tarly )
   end
 
+  def test_ennemies_with_alliances_stealing
+    @gbp.create_alliance( @stark, @lannister, 0 )
+    @gbp.create_alliance( @tyrell, @greyjoy, 0 )
+    @gbp.set_enemies( @stark, @tyrell )
+    assert @gbp.enemies?( @stark, @greyjoy )
+    @gbp.create_alliance( @stark, @greyjoy, 0 )
+    assert @gbp.enemies?( @tyrell, @greyjoy )
+  end
+
   def test_advanced_alliances
     @gbp.create_alliance( @stark, @lannister, 0 )
     @gbp.create_alliance( @stark, @greyjoy, 0 )

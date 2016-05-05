@@ -9,8 +9,6 @@ require_relative 'assert'
 
 class GGameBoardPlayer < ActiveRecord::Base
 
-  # TODO : Create a method that give, for one house : all allies (done), all ennemies, all neutrals
-
   has_many :al_alliances, dependent: :destroy
   has_many :al_houses, dependent: :destroy
   has_many :al_bets, dependent: :destroy
@@ -26,8 +24,20 @@ class GGameBoardPlayer < ActiveRecord::Base
     allies_ids = allies.map{ |e| e.id }
     enemies = al_enemies.where( h_house_id: house.id ).map{ |e| e.h_enemy_house }
     enemies_ids = enemies.map{ |e| e.id }
-    neutrals = HHouse.where.not( id: [ allies_ids + enemies_ids ] )
+    neutrals = HHouse.where.not( id: allies_ids + enemies_ids )
     { allies: allies, enemies: enemies, neutrals: neutrals }
+  end
+
+  private
+
+  # Only master houses can negociate
+  # Input : a hash of houses
+  def can_negotiate?( house_a, house_b )
+    [ house_a, house_b ].each do |h|
+      raise "#{self.class}##{__method__} : #{h.inspect} not suzerain" if h.vassal?
+    end
+
+    raise "#{self.class}##{__method__} : #{house_a.inspect} minor alliance member" if minor_alliance_member?( house_a )
   end
 
 end

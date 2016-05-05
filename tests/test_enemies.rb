@@ -26,23 +26,18 @@ class TestEnemies < Minitest::Test
     @gbp.create_alliance( @stark, @lannister, 1 )
     @gbp.set_enemies( @stark, @greyjoy )
     result_hash = @gbp.alliances_hash( @stark )
-    pp result_hash
+    # pp result_hash
   end
 
-  def test_alliances_break_after_becoming_ennemies
+  def test_allies_become_ennemies
     @gbp.create_alliance( @stark, @greyjoy, 1 )
-    @gbp.create_alliance( @stark, @lannister, 1 )
+    @gbp.create_alliance( @lannister, @tyrell, 1 )
     @gbp.set_enemies( @stark, @lannister )
     refute @gbp.allied?( @stark, @lannister )
     refute @gbp.allied?( @stark, @cendermark )
     assert @gbp.allied?( @stark, @greyjoy )
     assert @gbp.allied?( @stark, @pyk )
-    @gbp.set_enemies( @stark, @greyjoy )
-    @gbp.create_alliance( @stark, @lannister, 1 )
-    refute @gbp.enemies?( @stark, @lannister )
-    refute @gbp.enemies?( @stark, @cendermark )
-    assert @gbp.enemies?( @stark, @greyjoy )
-    assert @gbp.enemies?( @stark, @pyk )
+    assert @gbp.enemies?( @karstark, @cendermark )
   end
 
   def test_basic_ennemies_settings
