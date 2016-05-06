@@ -1,0 +1,1034 @@
+  [1m[36m (129.2ms)[0m  [1mDROP DATABASE IF EXISTS "feodalis"[0m
+  [1m[35m (0.5ms)[0m  CREATE DATABASE "feodalis" ENCODING = 'unicode'
+  [1m[36m (39.2ms)[0m  [1mDROP DATABASE IF EXISTS "feodalis"[0m
+  [1m[36m (0.3ms)[0m  [1mBEGIN[0m
+------------------------
+FeodalisTest: test_truth
+------------------------
+  [1m[35m (0.2ms)[0m  ROLLBACK
+  [1m[36m (8.6ms)[0m  [1mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL) [0m
+  [1m[35m (6.0ms)[0m  CREATE UNIQUE INDEX  "unique_schema_migrations" ON "schema_migrations"  ("version")
+  [1m[36mActiveRecord::SchemaMigration Load (0.4ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+Migrating to CreateFirstRuns (20160506094209)
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (8.3ms)[0m  [1mCREATE TABLE "g_game_board_players" ("id" serial primary key, "created_at" timestamp, "updated_at" timestamp) [0m
+  [1m[35m (11.6ms)[0m  CREATE TABLE "h_houses" ("id" serial primary key, "code_name" character varying NOT NULL, "h_suzerain_house_id" integer, "created_at" timestamp, "updated_at" timestamp) 
+  [1m[36m (8.5ms)[0m  [1mCREATE  INDEX  "index_h_houses_on_h_suzerain_house_id" ON "h_houses"  ("h_suzerain_house_id")[0m
+  [1m[35m (8.3ms)[0m  CREATE UNIQUE INDEX  "index_h_houses_on_code_name" ON "h_houses"  ("code_name")
+  [1m[36m (1.3ms)[0m  [1mALTER TABLE "h_houses" ADD CONSTRAINT "fk_rails_eb37fc6223"
+FOREIGN KEY ("h_suzerain_house_id")
+  REFERENCES "h_houses" ("id")
+[0m
+  [1m[35m (6.1ms)[0m  CREATE TABLE "al_alliances" ("id" serial primary key, "g_game_board_player_id" integer NOT NULL, "h_house_id" integer NOT NULL, "h_peer_house_id" integer NOT NULL, "created_at" timestamp, "updated_at" timestamp) 
+  [1m[36m (2.0ms)[0m  [1mALTER TABLE "al_alliances" ADD CONSTRAINT "fk_rails_401b3974ec"
+FOREIGN KEY ("g_game_board_player_id")
+  REFERENCES "g_game_board_players" ("id")
+[0m
+  [1m[35m (1.4ms)[0m  ALTER TABLE "al_alliances" ADD CONSTRAINT "fk_rails_701c4b36a5"
+FOREIGN KEY ("h_house_id")
+  REFERENCES "h_houses" ("id")
+
+  [1m[36m (5.7ms)[0m  [1mCREATE UNIQUE INDEX  "al_alliances_unique_index" ON "al_alliances"  ("g_game_board_player_id", "h_house_id", "h_peer_house_id")[0m
+  [1m[35m (0.9ms)[0m  ALTER TABLE "al_alliances" ADD CONSTRAINT "fk_rails_6b9ef823ee"
+FOREIGN KEY ("h_peer_house_id")
+  REFERENCES "h_houses" ("id")
+
+  [1m[36m (6.4ms)[0m  [1mCREATE TABLE "al_houses" ("id" serial primary key, "g_game_board_player_id" integer NOT NULL, "h_house_id" integer NOT NULL, "minor_alliance_member" boolean DEFAULT 'f', "last_bet" integer NOT NULL, "created_at" timestamp, "updated_at" timestamp) [0m
+  [1m[35m (2.0ms)[0m  ALTER TABLE "al_houses" ADD CONSTRAINT "fk_rails_843caf5bb4"
+FOREIGN KEY ("g_game_board_player_id")
+  REFERENCES "g_game_board_players" ("id")
+
+  [1m[36m (0.9ms)[0m  [1mALTER TABLE "al_houses" ADD CONSTRAINT "fk_rails_c4cf38e086"
+FOREIGN KEY ("h_house_id")
+  REFERENCES "h_houses" ("id")
+[0m
+  [1m[35m (3.8ms)[0m  CREATE UNIQUE INDEX  "al_houses_unique_index" ON "al_houses"  ("g_game_board_player_id", "h_house_id")
+  [1m[36m (9.1ms)[0m  [1mCREATE TABLE "al_bets" ("id" serial primary key, "g_game_board_player_id" integer NOT NULL, "h_house_id" integer NOT NULL, "h_target_house_id" integer NOT NULL, "bet" integer DEFAULT 0 NOT NULL, "created_at" timestamp, "updated_at" timestamp) [0m
+  [1m[35m (3.0ms)[0m  ALTER TABLE "al_bets" ADD CONSTRAINT "fk_rails_ee0524f0f7"
+FOREIGN KEY ("g_game_board_player_id")
+  REFERENCES "g_game_board_players" ("id")
+
+  [1m[36m (1.3ms)[0m  [1mALTER TABLE "al_bets" ADD CONSTRAINT "fk_rails_53a09abf3d"
+FOREIGN KEY ("h_house_id")
+  REFERENCES "h_houses" ("id")
+[0m
+  [1m[35m (4.8ms)[0m  CREATE UNIQUE INDEX  "al_bets_unique_index" ON "al_bets"  ("g_game_board_player_id", "h_house_id", "h_target_house_id")
+  [1m[36m (1.2ms)[0m  [1mALTER TABLE "al_bets" ADD CONSTRAINT "fk_rails_1bd9521acc"
+FOREIGN KEY ("h_target_house_id")
+  REFERENCES "h_houses" ("id")
+[0m
+  [1m[35m (5.8ms)[0m  CREATE TABLE "al_enemies" ("id" serial primary key, "g_game_board_player_id" integer NOT NULL, "h_house_id" integer NOT NULL, "h_enemy_house_id" integer NOT NULL, "created_at" timestamp, "updated_at" timestamp) 
+  [1m[36m (1.2ms)[0m  [1mALTER TABLE "al_enemies" ADD CONSTRAINT "fk_rails_577c159233"
+FOREIGN KEY ("g_game_board_player_id")
+  REFERENCES "g_game_board_players" ("id")
+[0m
+  [1m[35m (1.5ms)[0m  ALTER TABLE "al_enemies" ADD CONSTRAINT "fk_rails_f158e7875a"
+FOREIGN KEY ("h_house_id")
+  REFERENCES "h_houses" ("id")
+
+  [1m[36m (13.3ms)[0m  [1mCREATE UNIQUE INDEX  "al_enemies_unique_index" ON "al_enemies"  ("h_house_id", "h_enemy_house_id")[0m
+  [1m[35m (1.0ms)[0m  ALTER TABLE "al_enemies" ADD CONSTRAINT "fk_rails_f171dd7c43"
+FOREIGN KEY ("h_enemy_house_id")
+  REFERENCES "h_houses" ("id")
+
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES ($1)[0m  [["version", "20160506094209"]]
+  [1m[35m (10.6ms)[0m  COMMIT
+  [1m[36mActiveRecord::SchemaMigration Load (0.3ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (2.2ms)[0m  SELECT t2.oid::regclass::text AS to_table, a1.attname AS column, a2.attname AS primary_key, c.conname AS name, c.confupdtype AS on_update, c.confdeltype AS on_delete
+FROM pg_constraint c
+JOIN pg_class t1 ON c.conrelid = t1.oid
+JOIN pg_class t2 ON c.confrelid = t2.oid
+JOIN pg_attribute a1 ON a1.attnum = c.conkey[1] AND a1.attrelid = t1.oid
+JOIN pg_attribute a2 ON a2.attnum = c.confkey[1] AND a2.attrelid = t2.oid
+JOIN pg_namespace t3 ON c.connamespace = t3.oid
+WHERE c.contype = 'f'
+  AND t1.relname = 'al_alliances'
+  AND t3.nspname = ANY (current_schemas(false))
+ORDER BY c.conname
+
+  [1m[36m (1.9ms)[0m  [1mSELECT t2.oid::regclass::text AS to_table, a1.attname AS column, a2.attname AS primary_key, c.conname AS name, c.confupdtype AS on_update, c.confdeltype AS on_delete
+FROM pg_constraint c
+JOIN pg_class t1 ON c.conrelid = t1.oid
+JOIN pg_class t2 ON c.confrelid = t2.oid
+JOIN pg_attribute a1 ON a1.attnum = c.conkey[1] AND a1.attrelid = t1.oid
+JOIN pg_attribute a2 ON a2.attnum = c.confkey[1] AND a2.attrelid = t2.oid
+JOIN pg_namespace t3 ON c.connamespace = t3.oid
+WHERE c.contype = 'f'
+  AND t1.relname = 'al_bets'
+  AND t3.nspname = ANY (current_schemas(false))
+ORDER BY c.conname
+[0m
+  [1m[35m (3.2ms)[0m  SELECT t2.oid::regclass::text AS to_table, a1.attname AS column, a2.attname AS primary_key, c.conname AS name, c.confupdtype AS on_update, c.confdeltype AS on_delete
+FROM pg_constraint c
+JOIN pg_class t1 ON c.conrelid = t1.oid
+JOIN pg_class t2 ON c.confrelid = t2.oid
+JOIN pg_attribute a1 ON a1.attnum = c.conkey[1] AND a1.attrelid = t1.oid
+JOIN pg_attribute a2 ON a2.attnum = c.confkey[1] AND a2.attrelid = t2.oid
+JOIN pg_namespace t3 ON c.connamespace = t3.oid
+WHERE c.contype = 'f'
+  AND t1.relname = 'al_enemies'
+  AND t3.nspname = ANY (current_schemas(false))
+ORDER BY c.conname
+
+  [1m[36m (2.3ms)[0m  [1mSELECT t2.oid::regclass::text AS to_table, a1.attname AS column, a2.attname AS primary_key, c.conname AS name, c.confupdtype AS on_update, c.confdeltype AS on_delete
+FROM pg_constraint c
+JOIN pg_class t1 ON c.conrelid = t1.oid
+JOIN pg_class t2 ON c.confrelid = t2.oid
+JOIN pg_attribute a1 ON a1.attnum = c.conkey[1] AND a1.attrelid = t1.oid
+JOIN pg_attribute a2 ON a2.attnum = c.confkey[1] AND a2.attrelid = t2.oid
+JOIN pg_namespace t3 ON c.connamespace = t3.oid
+WHERE c.contype = 'f'
+  AND t1.relname = 'al_houses'
+  AND t3.nspname = ANY (current_schemas(false))
+ORDER BY c.conname
+[0m
+  [1m[35m (2.2ms)[0m  SELECT t2.oid::regclass::text AS to_table, a1.attname AS column, a2.attname AS primary_key, c.conname AS name, c.confupdtype AS on_update, c.confdeltype AS on_delete
+FROM pg_constraint c
+JOIN pg_class t1 ON c.conrelid = t1.oid
+JOIN pg_class t2 ON c.confrelid = t2.oid
+JOIN pg_attribute a1 ON a1.attnum = c.conkey[1] AND a1.attrelid = t1.oid
+JOIN pg_attribute a2 ON a2.attnum = c.confkey[1] AND a2.attrelid = t2.oid
+JOIN pg_namespace t3 ON c.connamespace = t3.oid
+WHERE c.contype = 'f'
+  AND t1.relname = 'g_game_board_players'
+  AND t3.nspname = ANY (current_schemas(false))
+ORDER BY c.conname
+
+  [1m[36m (2.7ms)[0m  [1mSELECT t2.oid::regclass::text AS to_table, a1.attname AS column, a2.attname AS primary_key, c.conname AS name, c.confupdtype AS on_update, c.confdeltype AS on_delete
+FROM pg_constraint c
+JOIN pg_class t1 ON c.conrelid = t1.oid
+JOIN pg_class t2 ON c.confrelid = t2.oid
+JOIN pg_attribute a1 ON a1.attnum = c.conkey[1] AND a1.attrelid = t1.oid
+JOIN pg_attribute a2 ON a2.attnum = c.confkey[1] AND a2.attrelid = t2.oid
+JOIN pg_namespace t3 ON c.connamespace = t3.oid
+WHERE c.contype = 'f'
+  AND t1.relname = 'h_houses'
+  AND t3.nspname = ANY (current_schemas(false))
+ORDER BY c.conname
+[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.5ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.3ms)[0m  BEGIN
+------------------------
+FeodalisTest: test_truth
+------------------------
+  [1m[36m (0.1ms)[0m  [1mROLLBACK[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.8ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.3ms)[0m  BEGIN
+------------------------
+FeodalisTest: test_truth
+------------------------
+  [1m[36m (0.1ms)[0m  [1mROLLBACK[0m
+  [1m[35mGGameBoardPlayer Load (0.4ms)[0m  SELECT "g_game_board_players".* FROM "g_game_board_players"
+  [1m[36m (0.3ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (3.6ms)[0m  INSERT INTO "g_game_board_players" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"  [["created_at", "2016-05-06 09:55:54.459318"], ["updated_at", "2016-05-06 09:55:54.459318"]]
+  [1m[36m (0.8ms)[0m  [1mCOMMIT[0m
+  [1m[35mHHouse Load (0.4ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "stark"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "lannister"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "cendermark"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "karstark"]]
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "greyjoy"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tyrell"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "pyk"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tarly"]]
+  [1m[35mGGameBoardPlayer Load (0.2ms)[0m  SELECT "g_game_board_players".* FROM "g_game_board_players"
+  [1m[36m (0.1ms)[0m  [1mBEGIN[0m
+  [1m[35mAlAlliance Load (0.4ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1  [["g_game_board_player_id", 1]]
+  [1m[36mAlHouse Load (1.0ms)[0m  [1mSELECT "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 1]]
+  [1m[35mAlBet Load (0.4ms)[0m  SELECT "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1  [["g_game_board_player_id", 1]]
+  [1m[36mAlEnemy Load (0.4ms)[0m  [1mSELECT "al_enemies".* FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 1]]
+  [1m[35mSQL (1.7ms)[0m  DELETE FROM "g_game_board_players" WHERE "g_game_board_players"."id" = $1  [["id", 1]]
+  [1m[36m (1.1ms)[0m  [1mCOMMIT[0m
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "g_game_board_players" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"[0m  [["created_at", "2016-05-06 09:55:54.508641"], ["updated_at", "2016-05-06 09:55:54.508641"]]
+  [1m[35m (0.6ms)[0m  COMMIT
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "stark"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "lannister"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "cendermark"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "karstark"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "greyjoy"]]
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tyrell"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "pyk"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tarly"]]
+  [1m[36mGGameBoardPlayer Load (0.3ms)[0m  [1mSELECT "g_game_board_players".* FROM "g_game_board_players"[0m
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 2]]
+  [1m[35mAlHouse Load (0.9ms)[0m  SELECT "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1  [["g_game_board_player_id", 2]]
+  [1m[36mAlBet Load (0.4ms)[0m  [1mSELECT "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 2]]
+  [1m[35mAlEnemy Load (0.3ms)[0m  SELECT "al_enemies".* FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1  [["g_game_board_player_id", 2]]
+  [1m[36mSQL (0.5ms)[0m  [1mDELETE FROM "g_game_board_players" WHERE "g_game_board_players"."id" = $1[0m  [["id", 2]]
+  [1m[35m (0.7ms)[0m  COMMIT
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "g_game_board_players" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"  [["created_at", "2016-05-06 09:55:54.522713"], ["updated_at", "2016-05-06 09:55:54.522713"]]
+  [1m[36m (0.6ms)[0m  [1mCOMMIT[0m
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "stark"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "lannister"]]
+  [1m[35mHHouse Load (0.1ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "cendermark"]]
+  [1m[36mHHouse Load (0.1ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "karstark"]]
+  [1m[35mHHouse Load (0.1ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "greyjoy"]]
+  [1m[36mHHouse Load (0.1ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tyrell"]]
+  [1m[35mHHouse Load (0.1ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "pyk"]]
+  [1m[36mHHouse Load (0.1ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tarly"]]
+  [1m[36mActiveRecord::SchemaMigration Load (0.4ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35mGGameBoardPlayer Load (0.9ms)[0m  SELECT "g_game_board_players".* FROM "g_game_board_players"
+  [1m[36m (0.3ms)[0m  [1mBEGIN[0m
+  [1m[35mAlAlliance Load (0.4ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1  [["g_game_board_player_id", 3]]
+  [1m[36mAlHouse Load (0.4ms)[0m  [1mSELECT "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 3]]
+  [1m[35mAlBet Load (0.3ms)[0m  SELECT "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1  [["g_game_board_player_id", 3]]
+  [1m[36mAlEnemy Load (0.4ms)[0m  [1mSELECT "al_enemies".* FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 3]]
+  [1m[35mSQL (1.0ms)[0m  DELETE FROM "g_game_board_players" WHERE "g_game_board_players"."id" = $1  [["id", 3]]
+  [1m[36m (0.9ms)[0m  [1mCOMMIT[0m
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36mSQL (0.5ms)[0m  [1mINSERT INTO "g_game_board_players" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"[0m  [["created_at", "2016-05-06 09:56:08.648722"], ["updated_at", "2016-05-06 09:56:08.648722"]]
+  [1m[35m (0.8ms)[0m  COMMIT
+  [1m[36mHHouse Load (0.4ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "stark"]]
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "lannister"]]
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "cendermark"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "karstark"]]
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "greyjoy"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tyrell"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "pyk"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tarly"]]
+  [1m[36mGGameBoardPlayer Load (0.3ms)[0m  [1mSELECT "g_game_board_players".* FROM "g_game_board_players"[0m
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 4]]
+  [1m[35mAlHouse Load (0.3ms)[0m  SELECT "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1  [["g_game_board_player_id", 4]]
+  [1m[36mAlBet Load (0.3ms)[0m  [1mSELECT "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 4]]
+  [1m[35mAlEnemy Load (0.3ms)[0m  SELECT "al_enemies".* FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1  [["g_game_board_player_id", 4]]
+  [1m[36mSQL (0.7ms)[0m  [1mDELETE FROM "g_game_board_players" WHERE "g_game_board_players"."id" = $1[0m  [["id", 4]]
+  [1m[35m (0.7ms)[0m  COMMIT
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "g_game_board_players" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"  [["created_at", "2016-05-06 09:56:08.667658"], ["updated_at", "2016-05-06 09:56:08.667658"]]
+  [1m[36m (1.0ms)[0m  [1mCOMMIT[0m
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "stark"]]
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "lannister"]]
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "cendermark"]]
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "karstark"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "greyjoy"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tyrell"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "pyk"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tarly"]]
+  [1m[35mGGameBoardPlayer Load (0.3ms)[0m  SELECT "g_game_board_players".* FROM "g_game_board_players"
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mAlAlliance Load (0.4ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1  [["g_game_board_player_id", 5]]
+  [1m[36mAlHouse Load (0.5ms)[0m  [1mSELECT "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 5]]
+  [1m[35mAlBet Load (0.3ms)[0m  SELECT "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1  [["g_game_board_player_id", 5]]
+  [1m[36mAlEnemy Load (0.4ms)[0m  [1mSELECT "al_enemies".* FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 5]]
+  [1m[35mSQL (0.5ms)[0m  DELETE FROM "g_game_board_players" WHERE "g_game_board_players"."id" = $1  [["id", 5]]
+  [1m[36m (0.9ms)[0m  [1mCOMMIT[0m
+  [1m[35m (0.3ms)[0m  BEGIN
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "g_game_board_players" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"[0m  [["created_at", "2016-05-06 09:56:08.687594"], ["updated_at", "2016-05-06 09:56:08.687594"]]
+  [1m[35m (0.9ms)[0m  COMMIT
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "stark"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "lannister"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "cendermark"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "karstark"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "greyjoy"]]
+  [1m[35mHHouse Load (0.1ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tyrell"]]
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "pyk"]]
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tarly"]]
+  [1m[36m (0.3ms)[0m  [1mBEGIN[0m
+------------------------
+FeodalisTest: test_truth
+------------------------
+  [1m[35m (0.3ms)[0m  ROLLBACK
+  [1m[36mActiveRecord::SchemaMigration Load (0.4ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35mGGameBoardPlayer Load (0.6ms)[0m  SELECT "g_game_board_players".* FROM "g_game_board_players"
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mAlAlliance Load (0.4ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1  [["g_game_board_player_id", 6]]
+  [1m[36m (0.2ms)[0m  [1mROLLBACK[0m
+  [1m[35mGGameBoardPlayer Load (0.4ms)[0m  SELECT "g_game_board_players".* FROM "g_game_board_players"
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mAlAlliance Load (0.3ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1  [["g_game_board_player_id", 6]]
+  [1m[36m (0.2ms)[0m  [1mROLLBACK[0m
+  [1m[35mGGameBoardPlayer Load (1.9ms)[0m  SELECT "g_game_board_players".* FROM "g_game_board_players"
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1  [["g_game_board_player_id", 6]]
+  [1m[36m (0.1ms)[0m  [1mROLLBACK[0m
+  [1m[35m (0.1ms)[0m  BEGIN
+------------------------
+FeodalisTest: test_truth
+------------------------
+  [1m[36m (0.1ms)[0m  [1mROLLBACK[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.4ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35mGGameBoardPlayer Load (0.5ms)[0m  SELECT "g_game_board_players".* FROM "g_game_board_players"
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mAlAlliance Load (0.4ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1  [["g_game_board_player_id", 6]]
+  [1m[36m (0.3ms)[0m  [1mROLLBACK[0m
+  [1m[35mGGameBoardPlayer Load (0.3ms)[0m  SELECT "g_game_board_players".* FROM "g_game_board_players"
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mAlAlliance Load (0.3ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1  [["g_game_board_player_id", 6]]
+  [1m[36m (0.3ms)[0m  [1mROLLBACK[0m
+  [1m[35mGGameBoardPlayer Load (0.5ms)[0m  SELECT "g_game_board_players".* FROM "g_game_board_players"
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mAlAlliance Load (0.3ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1  [["g_game_board_player_id", 6]]
+  [1m[36m (0.2ms)[0m  [1mROLLBACK[0m
+  [1m[35m (0.3ms)[0m  BEGIN
+------------------------
+FeodalisTest: test_truth
+------------------------
+  [1m[36m (0.2ms)[0m  [1mROLLBACK[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.4ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.2ms)[0m  BEGIN
+------------------------
+FeodalisTest: test_truth
+------------------------
+  [1m[36m (0.2ms)[0m  [1mROLLBACK[0m
+  [1m[35mGGameBoardPlayer Load (0.5ms)[0m  SELECT "g_game_board_players".* FROM "g_game_board_players"
+  [1m[36m (0.3ms)[0m  [1mBEGIN[0m
+  [1m[35mAlAlliance Load (0.4ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1  [["g_game_board_player_id", 6]]
+  [1m[36mAlHouse Load (0.3ms)[0m  [1mSELECT "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 6]]
+  [1m[35m (0.3ms)[0m  ROLLBACK
+  [1m[36mGGameBoardPlayer Load (0.4ms)[0m  [1mSELECT "g_game_board_players".* FROM "g_game_board_players"[0m
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36mAlAlliance Load (0.3ms)[0m  [1mSELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 6]]
+  [1m[35mAlHouse Load (0.3ms)[0m  SELECT "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1  [["g_game_board_player_id", 6]]
+  [1m[36m (0.2ms)[0m  [1mROLLBACK[0m
+  [1m[35mGGameBoardPlayer Load (0.8ms)[0m  SELECT "g_game_board_players".* FROM "g_game_board_players"
+  [1m[36m (0.1ms)[0m  [1mBEGIN[0m
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1  [["g_game_board_player_id", 6]]
+  [1m[36mAlHouse Load (0.2ms)[0m  [1mSELECT "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 6]]
+  [1m[35m (0.2ms)[0m  ROLLBACK
+  [1m[36mActiveRecord::SchemaMigration Load (0.5ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35mGGameBoardPlayer Load (0.8ms)[0m  SELECT "g_game_board_players".* FROM "g_game_board_players"
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mAlAlliance Load (0.4ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1  [["g_game_board_player_id", 6]]
+  [1m[36mAlHouse Load (0.3ms)[0m  [1mSELECT "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 6]]
+  [1m[35mAlBet Load (0.3ms)[0m  SELECT "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1  [["g_game_board_player_id", 6]]
+  [1m[36m (0.2ms)[0m  [1mROLLBACK[0m
+  [1m[35mGGameBoardPlayer Load (0.3ms)[0m  SELECT "g_game_board_players".* FROM "g_game_board_players"
+  [1m[36m (0.1ms)[0m  [1mBEGIN[0m
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1  [["g_game_board_player_id", 6]]
+  [1m[36mAlHouse Load (0.3ms)[0m  [1mSELECT "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 6]]
+  [1m[35mAlBet Load (0.3ms)[0m  SELECT "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1  [["g_game_board_player_id", 6]]
+  [1m[36m (0.2ms)[0m  [1mROLLBACK[0m
+  [1m[35mGGameBoardPlayer Load (0.4ms)[0m  SELECT "g_game_board_players".* FROM "g_game_board_players"
+  [1m[36m (0.1ms)[0m  [1mBEGIN[0m
+  [1m[35mAlAlliance Load (0.3ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1  [["g_game_board_player_id", 6]]
+  [1m[36mAlHouse Load (0.4ms)[0m  [1mSELECT "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 6]]
+  [1m[35mAlBet Load (0.6ms)[0m  SELECT "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1  [["g_game_board_player_id", 6]]
+  [1m[36m (0.4ms)[0m  [1mROLLBACK[0m
+  [1m[35m (0.3ms)[0m  BEGIN
+------------------------
+FeodalisTest: test_truth
+------------------------
+  [1m[36m (0.2ms)[0m  [1mROLLBACK[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.5ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35mGGameBoardPlayer Load (0.6ms)[0m  SELECT "g_game_board_players".* FROM "g_game_board_players"
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mAlAlliance Load (0.5ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1  [["g_game_board_player_id", 6]]
+  [1m[36mAlHouse Load (0.4ms)[0m  [1mSELECT "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 6]]
+  [1m[35mAlBet Load (0.4ms)[0m  SELECT "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1  [["g_game_board_player_id", 6]]
+  [1m[36mAlEnemy Load (0.4ms)[0m  [1mSELECT "al_enemies".* FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 6]]
+  [1m[35mSQL (0.9ms)[0m  DELETE FROM "g_game_board_players" WHERE "g_game_board_players"."id" = $1  [["id", 6]]
+  [1m[36m (2.1ms)[0m  [1mCOMMIT[0m
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "g_game_board_players" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"[0m  [["created_at", "2016-05-06 10:07:23.514047"], ["updated_at", "2016-05-06 10:07:23.514047"]]
+  [1m[35m (0.7ms)[0m  COMMIT
+  [1m[36mHHouse Load (0.4ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "stark"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "lannister"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "cendermark"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "karstark"]]
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "greyjoy"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tyrell"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "pyk"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tarly"]]
+  [1m[36mGGameBoardPlayer Load (0.3ms)[0m  [1mSELECT "g_game_board_players".* FROM "g_game_board_players"[0m
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 7]]
+  [1m[35mAlHouse Load (0.1ms)[0m  SELECT "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1  [["g_game_board_player_id", 7]]
+  [1m[36mAlBet Load (0.1ms)[0m  [1mSELECT "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 7]]
+  [1m[35mAlEnemy Load (0.1ms)[0m  SELECT "al_enemies".* FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1  [["g_game_board_player_id", 7]]
+  [1m[36mSQL (0.4ms)[0m  [1mDELETE FROM "g_game_board_players" WHERE "g_game_board_players"."id" = $1[0m  [["id", 7]]
+  [1m[35m (25.5ms)[0m  COMMIT
+  [1m[36m (0.3ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "g_game_board_players" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"  [["created_at", "2016-05-06 10:07:23.557817"], ["updated_at", "2016-05-06 10:07:23.557817"]]
+  [1m[36m (0.8ms)[0m  [1mCOMMIT[0m
+  [1m[35mHHouse Load (19.4ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "stark"]]
+  [1m[36mHHouse Load (0.8ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "lannister"]]
+  [1m[35mHHouse Load (0.6ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "cendermark"]]
+  [1m[36mHHouse Load (1.4ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "karstark"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "greyjoy"]]
+  [1m[36mHHouse Load (0.1ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tyrell"]]
+  [1m[35mHHouse Load (0.1ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "pyk"]]
+  [1m[36mHHouse Load (0.1ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tarly"]]
+  [1m[35mGGameBoardPlayer Load (0.2ms)[0m  SELECT "g_game_board_players".* FROM "g_game_board_players"
+  [1m[36m (0.1ms)[0m  [1mBEGIN[0m
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1  [["g_game_board_player_id", 8]]
+  [1m[36mAlHouse Load (0.3ms)[0m  [1mSELECT "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 8]]
+  [1m[35mAlBet Load (0.3ms)[0m  SELECT "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1  [["g_game_board_player_id", 8]]
+  [1m[36mAlEnemy Load (0.3ms)[0m  [1mSELECT "al_enemies".* FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 8]]
+  [1m[35mSQL (0.6ms)[0m  DELETE FROM "g_game_board_players" WHERE "g_game_board_players"."id" = $1  [["id", 8]]
+  [1m[36m (0.7ms)[0m  [1mCOMMIT[0m
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "g_game_board_players" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"[0m  [["created_at", "2016-05-06 10:07:23.594273"], ["updated_at", "2016-05-06 10:07:23.594273"]]
+  [1m[35m (0.6ms)[0m  COMMIT
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "stark"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "lannister"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "cendermark"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "karstark"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "greyjoy"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tyrell"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "pyk"]]
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tarly"]]
+  [1m[36m (2.9ms)[0m  [1mBEGIN[0m
+------------------------
+FeodalisTest: test_truth
+------------------------
+  [1m[35m (0.2ms)[0m  ROLLBACK
+  [1m[36mActiveRecord::SchemaMigration Load (0.4ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.3ms)[0m  BEGIN
+------------------------
+FeodalisTest: test_truth
+------------------------
+  [1m[36m (0.2ms)[0m  [1mROLLBACK[0m
+  [1m[35mHHouse Load (0.4ms)[0m  SELECT "h_houses".* FROM "h_houses"
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "stark"]]
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36mSQL (0.7ms)[0m  [1mINSERT INTO "h_houses" ("code_name", "created_at", "updated_at") VALUES ($1, $2, $3) RETURNING "id"[0m  [["code_name", "stark"], ["created_at", "2016-05-06 10:08:11.063118"], ["updated_at", "2016-05-06 10:08:11.063118"]]
+  [1m[35m (1.8ms)[0m  COMMIT
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "karstark"]]
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "h_houses" ("code_name", "created_at", "updated_at") VALUES ($1, $2, $3) RETURNING "id"[0m  [["code_name", "karstark"], ["created_at", "2016-05-06 10:08:11.070561"], ["updated_at", "2016-05-06 10:08:11.070561"]]
+  [1m[35m (0.6ms)[0m  COMMIT
+  [1m[36m (2.8ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (1.1ms)[0m  UPDATE "h_houses" SET "h_suzerain_house_id" = $1, "updated_at" = $2 WHERE "h_houses"."id" = $3  [["h_suzerain_house_id", 1], ["updated_at", "2016-05-06 10:08:11.082638"], ["id", 2]]
+  [1m[36m (0.6ms)[0m  [1mCOMMIT[0m
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "lannister"]]
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.7ms)[0m  INSERT INTO "h_houses" ("code_name", "created_at", "updated_at") VALUES ($1, $2, $3) RETURNING "id"  [["code_name", "lannister"], ["created_at", "2016-05-06 10:08:11.092468"], ["updated_at", "2016-05-06 10:08:11.092468"]]
+  [1m[36m (0.7ms)[0m  [1mCOMMIT[0m
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "cendermark"]]
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "h_houses" ("code_name", "created_at", "updated_at") VALUES ($1, $2, $3) RETURNING "id"  [["code_name", "cendermark"], ["created_at", "2016-05-06 10:08:11.096288"], ["updated_at", "2016-05-06 10:08:11.096288"]]
+  [1m[36m (0.7ms)[0m  [1mCOMMIT[0m
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36mSQL (0.3ms)[0m  [1mUPDATE "h_houses" SET "h_suzerain_house_id" = $1, "updated_at" = $2 WHERE "h_houses"."id" = $3[0m  [["h_suzerain_house_id", 3], ["updated_at", "2016-05-06 10:08:11.098763"], ["id", 4]]
+  [1m[35m (0.6ms)[0m  COMMIT
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "greyjoy"]]
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "h_houses" ("code_name", "created_at", "updated_at") VALUES ($1, $2, $3) RETURNING "id"[0m  [["code_name", "greyjoy"], ["created_at", "2016-05-06 10:08:11.101714"], ["updated_at", "2016-05-06 10:08:11.101714"]]
+  [1m[35m (0.6ms)[0m  COMMIT
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "pyk"]]
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "h_houses" ("code_name", "created_at", "updated_at") VALUES ($1, $2, $3) RETURNING "id"[0m  [["code_name", "pyk"], ["created_at", "2016-05-06 10:08:11.104410"], ["updated_at", "2016-05-06 10:08:11.104410"]]
+  [1m[35m (0.6ms)[0m  COMMIT
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.3ms)[0m  UPDATE "h_houses" SET "h_suzerain_house_id" = $1, "updated_at" = $2 WHERE "h_houses"."id" = $3  [["h_suzerain_house_id", 5], ["updated_at", "2016-05-06 10:08:11.106790"], ["id", 6]]
+  [1m[36m (0.5ms)[0m  [1mCOMMIT[0m
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tyrell"]]
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.6ms)[0m  INSERT INTO "h_houses" ("code_name", "created_at", "updated_at") VALUES ($1, $2, $3) RETURNING "id"  [["code_name", "tyrell"], ["created_at", "2016-05-06 10:08:11.109521"], ["updated_at", "2016-05-06 10:08:11.109521"]]
+  [1m[36m (0.7ms)[0m  [1mCOMMIT[0m
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tarly"]]
+  [1m[36m (0.1ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "h_houses" ("code_name", "created_at", "updated_at") VALUES ($1, $2, $3) RETURNING "id"  [["code_name", "tarly"], ["created_at", "2016-05-06 10:08:11.112780"], ["updated_at", "2016-05-06 10:08:11.112780"]]
+  [1m[36m (0.6ms)[0m  [1mCOMMIT[0m
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36mSQL (0.3ms)[0m  [1mUPDATE "h_houses" SET "h_suzerain_house_id" = $1, "updated_at" = $2 WHERE "h_houses"."id" = $3[0m  [["h_suzerain_house_id", 7], ["updated_at", "2016-05-06 10:08:11.115021"], ["id", 8]]
+  [1m[35m (0.6ms)[0m  COMMIT
+  [1m[36mGGameBoardPlayer Load (0.4ms)[0m  [1mSELECT "g_game_board_players".* FROM "g_game_board_players"[0m
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36mAlAlliance Load (0.3ms)[0m  [1mSELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 9]]
+  [1m[35mAlHouse Load (0.5ms)[0m  SELECT "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1  [["g_game_board_player_id", 9]]
+  [1m[36mAlBet Load (0.3ms)[0m  [1mSELECT "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 9]]
+  [1m[35mAlEnemy Load (0.3ms)[0m  SELECT "al_enemies".* FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1  [["g_game_board_player_id", 9]]
+  [1m[36mSQL (0.7ms)[0m  [1mDELETE FROM "g_game_board_players" WHERE "g_game_board_players"."id" = $1[0m  [["id", 9]]
+  [1m[35m (0.7ms)[0m  COMMIT
+  [1m[36m (0.1ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "g_game_board_players" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"  [["created_at", "2016-05-06 10:08:11.135761"], ["updated_at", "2016-05-06 10:08:11.135761"]]
+  [1m[36m (0.7ms)[0m  [1mCOMMIT[0m
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "stark"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "lannister"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "cendermark"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "karstark"]]
+  [1m[35mHHouse Load (0.1ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "greyjoy"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tyrell"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "pyk"]]
+  [1m[36mHHouse Load (0.1ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tarly"]]
+  [1m[35mHHouse Load (0.6ms)[0m  SELECT "h_houses".* FROM "h_houses"
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (18.0ms)[0m  DELETE FROM "h_houses" WHERE "h_houses"."id" = $1  [["id", 1]]
+  [1m[36m (0.2ms)[0m  [1mROLLBACK[0m
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT "h_houses".* FROM "h_houses"
+  [1m[36m (0.1ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.5ms)[0m  DELETE FROM "h_houses" WHERE "h_houses"."id" = $1  [["id", 1]]
+  [1m[36m (0.3ms)[0m  [1mROLLBACK[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.5ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.2ms)[0m  BEGIN
+------------------------
+FeodalisTest: test_truth
+------------------------
+  [1m[36m (0.2ms)[0m  [1mROLLBACK[0m
+  [1m[35mHHouse Load (0.5ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "stark"]]
+  [1m[36mHHouse Load (0.4ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "karstark"]]
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (0.2ms)[0m  [1mCOMMIT[0m
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "lannister"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "cendermark"]]
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (0.2ms)[0m  [1mCOMMIT[0m
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "greyjoy"]]
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "pyk"]]
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36m (0.2ms)[0m  [1mCOMMIT[0m
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tyrell"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tarly"]]
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (0.2ms)[0m  [1mCOMMIT[0m
+  [1m[35mGGameBoardPlayer Load (0.4ms)[0m  SELECT "g_game_board_players".* FROM "g_game_board_players"
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mAlAlliance Load (0.4ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1  [["g_game_board_player_id", 10]]
+  [1m[36mAlHouse Load (0.4ms)[0m  [1mSELECT "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 10]]
+  [1m[35mAlBet Load (0.4ms)[0m  SELECT "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1  [["g_game_board_player_id", 10]]
+  [1m[36mAlEnemy Load (0.4ms)[0m  [1mSELECT "al_enemies".* FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 10]]
+  [1m[35mSQL (0.9ms)[0m  DELETE FROM "g_game_board_players" WHERE "g_game_board_players"."id" = $1  [["id", 10]]
+  [1m[36m (2.3ms)[0m  [1mCOMMIT[0m
+  [1m[35m (0.3ms)[0m  BEGIN
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "g_game_board_players" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"[0m  [["created_at", "2016-05-06 10:08:55.278825"], ["updated_at", "2016-05-06 10:08:55.278825"]]
+  [1m[35m (0.9ms)[0m  COMMIT
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "stark"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "lannister"]]
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "cendermark"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "karstark"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "greyjoy"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tyrell"]]
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "pyk"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tarly"]]
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "stark"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "karstark"]]
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35m (0.2ms)[0m  COMMIT
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "lannister"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "cendermark"]]
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35m (0.2ms)[0m  COMMIT
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "greyjoy"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "pyk"]]
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35m (0.2ms)[0m  COMMIT
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tyrell"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tarly"]]
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35m (0.2ms)[0m  COMMIT
+  [1m[36mGGameBoardPlayer Load (0.3ms)[0m  [1mSELECT "g_game_board_players".* FROM "g_game_board_players"[0m
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 11]]
+  [1m[35mAlHouse Load (0.2ms)[0m  SELECT "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1  [["g_game_board_player_id", 11]]
+  [1m[36mAlBet Load (0.3ms)[0m  [1mSELECT "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 11]]
+  [1m[35mAlEnemy Load (0.2ms)[0m  SELECT "al_enemies".* FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1  [["g_game_board_player_id", 11]]
+  [1m[36mSQL (0.5ms)[0m  [1mDELETE FROM "g_game_board_players" WHERE "g_game_board_players"."id" = $1[0m  [["id", 11]]
+  [1m[35m (0.8ms)[0m  COMMIT
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "g_game_board_players" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"  [["created_at", "2016-05-06 10:08:55.308123"], ["updated_at", "2016-05-06 10:08:55.308123"]]
+  [1m[36m (1.0ms)[0m  [1mCOMMIT[0m
+  [1m[35mHHouse Load (0.5ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "stark"]]
+  [1m[36mHHouse Load (0.5ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "lannister"]]
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "cendermark"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "karstark"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "greyjoy"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tyrell"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "pyk"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tarly"]]
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "stark"]]
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "karstark"]]
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36m (0.3ms)[0m  [1mCOMMIT[0m
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "lannister"]]
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "cendermark"]]
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (0.1ms)[0m  [1mCOMMIT[0m
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "greyjoy"]]
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "pyk"]]
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (0.2ms)[0m  [1mCOMMIT[0m
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tyrell"]]
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tarly"]]
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (0.2ms)[0m  [1mCOMMIT[0m
+  [1m[35mGGameBoardPlayer Load (0.3ms)[0m  SELECT "g_game_board_players".* FROM "g_game_board_players"
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mAlAlliance Load (0.7ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1  [["g_game_board_player_id", 12]]
+  [1m[36mAlHouse Load (0.4ms)[0m  [1mSELECT "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 12]]
+  [1m[35mAlBet Load (0.3ms)[0m  SELECT "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1  [["g_game_board_player_id", 12]]
+  [1m[36mAlEnemy Load (0.3ms)[0m  [1mSELECT "al_enemies".* FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 12]]
+  [1m[35mSQL (0.6ms)[0m  DELETE FROM "g_game_board_players" WHERE "g_game_board_players"."id" = $1  [["id", 12]]
+  [1m[36m (1.0ms)[0m  [1mCOMMIT[0m
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "g_game_board_players" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"[0m  [["created_at", "2016-05-06 10:08:55.340664"], ["updated_at", "2016-05-06 10:08:55.340664"]]
+  [1m[35m (0.8ms)[0m  COMMIT
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "stark"]]
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "lannister"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "cendermark"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "karstark"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "greyjoy"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tyrell"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "pyk"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tarly"]]
+  [1m[36mActiveRecord::SchemaMigration Load (0.4ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35mHHouse Load (0.5ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "stark"]]
+  [1m[36mHHouse Load (0.4ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "karstark"]]
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (0.3ms)[0m  [1mCOMMIT[0m
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "lannister"]]
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "cendermark"]]
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (0.2ms)[0m  [1mCOMMIT[0m
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "greyjoy"]]
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "pyk"]]
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (0.2ms)[0m  [1mCOMMIT[0m
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tyrell"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tarly"]]
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (0.2ms)[0m  [1mCOMMIT[0m
+  [1m[35mGGameBoardPlayer Load (0.4ms)[0m  SELECT "g_game_board_players".* FROM "g_game_board_players"
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mAlAlliance Load (0.5ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1  [["g_game_board_player_id", 13]]
+  [1m[36mAlHouse Load (0.4ms)[0m  [1mSELECT "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 13]]
+  [1m[35mAlBet Load (0.4ms)[0m  SELECT "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1  [["g_game_board_player_id", 13]]
+  [1m[36mAlEnemy Load (0.4ms)[0m  [1mSELECT "al_enemies".* FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 13]]
+  [1m[35mSQL (0.9ms)[0m  DELETE FROM "g_game_board_players" WHERE "g_game_board_players"."id" = $1  [["id", 13]]
+  [1m[36m (2.2ms)[0m  [1mCOMMIT[0m
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "g_game_board_players" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"[0m  [["created_at", "2016-05-06 10:09:19.156854"], ["updated_at", "2016-05-06 10:09:19.156854"]]
+  [1m[35m (0.8ms)[0m  COMMIT
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "stark"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "lannister"]]
+  [1m[36mHHouse Load (0.5ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "cendermark"]]
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "karstark"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "greyjoy"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tyrell"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "pyk"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tarly"]]
+  [1m[36mAlBet Load (0.3ms)[0m  [1mSELECT  "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1 AND "al_bets"."h_house_id" = $2 AND "al_bets"."h_target_house_id" = $3  ORDER BY "al_bets"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 14], ["h_house_id", 1], ["h_target_house_id", 3]]
+  [1m[35m (0.3ms)[0m  BEGIN
+  [1m[36mSQL (0.8ms)[0m  [1mINSERT INTO "al_bets" ("g_game_board_player_id", "h_house_id", "h_target_house_id", "bet", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 1], ["h_target_house_id", 3], ["bet", 10], ["created_at", "2016-05-06 10:09:19.173157"], ["updated_at", "2016-05-06 10:09:19.173157"]]
+  [1m[35m (0.9ms)[0m  COMMIT
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35m (0.3ms)[0m  SELECT DISTINCT "al_bets"."h_target_house_id" FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1  [["g_game_board_player_id", 14]]
+  [1m[36m (0.1ms)[0m  [1mSELECT "al_houses"."last_bet" FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1 AND "al_houses"."h_house_id" = $2[0m  [["g_game_board_player_id", 14], ["h_house_id", 3]]
+  [1m[35mAlBet Load (0.2ms)[0m  SELECT  "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1 AND "al_bets"."h_target_house_id" = $2 AND (bet >= 2)  ORDER BY bet DESC LIMIT 1  [["g_game_board_player_id", 14], ["h_target_house_id", 3]]
+  [1m[36mHHouse Load (0.4ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."id" = $1 LIMIT 1[0m  [["id", 1]]
+  [1m[35mHHouse Load (0.5ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."id" = $1 LIMIT 1  [["id", 3]]
+  [1m[36mAlHouse Load (0.3ms)[0m  [1mSELECT  "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1 AND "al_houses"."h_house_id" = $2 LIMIT 1[0m  [["g_game_board_player_id", 14], ["h_house_id", 1]]
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT "h_houses".* FROM "h_houses" WHERE "h_houses"."h_suzerain_house_id" = $1  [["h_suzerain_house_id", 3]]
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT "h_houses".* FROM "h_houses" WHERE "h_houses"."h_suzerain_house_id" = $1[0m  [["h_suzerain_house_id", 1]]
+  [1m[35mAlAlliance Load (0.3ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2  [["g_game_board_player_id", 14], ["h_house_id", 1]]
+  [1m[36mSQL (0.3ms)[0m  [1mDELETE FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1 AND "al_enemies"."h_house_id" IN (1, 2, 3, 4) AND "al_enemies"."h_enemy_house_id" IN (3, 4)[0m  [["g_game_board_player_id", 14]]
+  [1m[35mSQL (0.2ms)[0m  DELETE FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1 AND "al_enemies"."h_house_id" IN (3, 4) AND "al_enemies"."h_enemy_house_id" IN (1, 2, 3, 4)  [["g_game_board_player_id", 14]]
+  [1m[36mAlHouse Load (4.0ms)[0m  [1mSELECT  "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1 AND "al_houses"."h_house_id" = $2  ORDER BY "al_houses"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 14], ["h_house_id", 3]]
+  [1m[35mSQL (0.7ms)[0m  INSERT INTO "al_houses" ("g_game_board_player_id", "h_house_id", "minor_alliance_member", "last_bet", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"  [["g_game_board_player_id", 14], ["h_house_id", 3], ["minor_alliance_member", "t"], ["last_bet", 10], ["created_at", "2016-05-06 10:09:19.231227"], ["updated_at", "2016-05-06 10:09:19.231227"]]
+  [1m[36mAlHouse Load (0.2ms)[0m  [1mSELECT  "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1 AND "al_houses"."h_house_id" = $2  ORDER BY "al_houses"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 14], ["h_house_id", 4]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_houses" ("g_game_board_player_id", "h_house_id", "minor_alliance_member", "last_bet", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"  [["g_game_board_player_id", 14], ["h_house_id", 4], ["minor_alliance_member", "t"], ["last_bet", 10], ["created_at", "2016-05-06 10:09:19.234480"], ["updated_at", "2016-05-06 10:09:19.234480"]]
+  [1m[36mSQL (0.1ms)[0m  [1mDELETE FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" IN (3, 4)[0m  [["g_game_board_player_id", 14]]
+  [1m[35mAlAlliance Load (0.1ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 1], ["h_peer_house_id", 2]]
+  [1m[36mSQL (0.6ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 1], ["h_peer_house_id", 2], ["created_at", "2016-05-06 10:09:19.240078"], ["updated_at", "2016-05-06 10:09:19.240078"]]
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 1], ["h_peer_house_id", 3]]
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 1], ["h_peer_house_id", 3], ["created_at", "2016-05-06 10:09:19.243168"], ["updated_at", "2016-05-06 10:09:19.243168"]]
+  [1m[35mAlAlliance Load (0.1ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 1], ["h_peer_house_id", 4]]
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 1], ["h_peer_house_id", 4], ["created_at", "2016-05-06 10:09:19.245219"], ["updated_at", "2016-05-06 10:09:19.245219"]]
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 2], ["h_peer_house_id", 1]]
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 2], ["h_peer_house_id", 1], ["created_at", "2016-05-06 10:09:19.247289"], ["updated_at", "2016-05-06 10:09:19.247289"]]
+  [1m[35mAlAlliance Load (0.1ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 2], ["h_peer_house_id", 3]]
+  [1m[36mSQL (1.8ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 2], ["h_peer_house_id", 3], ["created_at", "2016-05-06 10:09:19.249299"], ["updated_at", "2016-05-06 10:09:19.249299"]]
+  [1m[35mAlAlliance Load (0.4ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 2], ["h_peer_house_id", 4]]
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 2], ["h_peer_house_id", 4], ["created_at", "2016-05-06 10:09:19.253732"], ["updated_at", "2016-05-06 10:09:19.253732"]]
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 3], ["h_peer_house_id", 1]]
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 3], ["h_peer_house_id", 1], ["created_at", "2016-05-06 10:09:19.256191"], ["updated_at", "2016-05-06 10:09:19.256191"]]
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 3], ["h_peer_house_id", 2]]
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 3], ["h_peer_house_id", 2], ["created_at", "2016-05-06 10:09:19.258627"], ["updated_at", "2016-05-06 10:09:19.258627"]]
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 3], ["h_peer_house_id", 4]]
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 3], ["h_peer_house_id", 4], ["created_at", "2016-05-06 10:09:19.260697"], ["updated_at", "2016-05-06 10:09:19.260697"]]
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 4], ["h_peer_house_id", 1]]
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 4], ["h_peer_house_id", 1], ["created_at", "2016-05-06 10:09:19.262839"], ["updated_at", "2016-05-06 10:09:19.262839"]]
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 4], ["h_peer_house_id", 2]]
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 4], ["h_peer_house_id", 2], ["created_at", "2016-05-06 10:09:19.264857"], ["updated_at", "2016-05-06 10:09:19.264857"]]
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 4], ["h_peer_house_id", 3]]
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 4], ["h_peer_house_id", 3], ["created_at", "2016-05-06 10:09:19.266818"], ["updated_at", "2016-05-06 10:09:19.266818"]]
+  [1m[35mSQL (0.2ms)[0m  DELETE FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1  [["g_game_board_player_id", 14]]
+  [1m[36m (2.0ms)[0m  [1mCOMMIT[0m
+  [1m[35mAlBet Load (0.4ms)[0m  SELECT  "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1 AND "al_bets"."h_house_id" = $2 AND "al_bets"."h_target_house_id" = $3  ORDER BY "al_bets"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 5], ["h_target_house_id", 3]]
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "al_bets" ("g_game_board_player_id", "h_house_id", "h_target_house_id", "bet", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"  [["g_game_board_player_id", 14], ["h_house_id", 5], ["h_target_house_id", 3], ["bet", 10], ["created_at", "2016-05-06 10:09:19.272821"], ["updated_at", "2016-05-06 10:09:19.272821"]]
+  [1m[36m (0.7ms)[0m  [1mCOMMIT[0m
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (0.3ms)[0m  [1mSELECT DISTINCT "al_bets"."h_target_house_id" FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 14]]
+  [1m[35m (0.2ms)[0m  SELECT "al_houses"."last_bet" FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1 AND "al_houses"."h_house_id" = $2  [["g_game_board_player_id", 14], ["h_house_id", 3]]
+  [1m[36mAlBet Load (0.2ms)[0m  [1mSELECT  "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1 AND "al_bets"."h_target_house_id" = $2 AND (bet >= 20)  ORDER BY bet DESC LIMIT 1[0m  [["g_game_board_player_id", 14], ["h_target_house_id", 3]]
+  [1m[35mSQL (0.2ms)[0m  DELETE FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1  [["g_game_board_player_id", 14]]
+  [1m[36m (0.7ms)[0m  [1mCOMMIT[0m
+  [1m[35mAlAlliance Exists (0.3ms)[0m  SELECT  1 AS one FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3 LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 3], ["h_peer_house_id", 1]]
+  [1m[36mAlBet Load (0.3ms)[0m  [1mSELECT  "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1 AND "al_bets"."h_house_id" = $2 AND "al_bets"."h_target_house_id" = $3  ORDER BY "al_bets"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 14], ["h_house_id", 5], ["h_target_house_id", 3]]
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "al_bets" ("g_game_board_player_id", "h_house_id", "h_target_house_id", "bet", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 5], ["h_target_house_id", 3], ["bet", 20], ["created_at", "2016-05-06 10:09:19.287900"], ["updated_at", "2016-05-06 10:09:19.287900"]]
+  [1m[35m (0.7ms)[0m  COMMIT
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35m (0.4ms)[0m  SELECT DISTINCT "al_bets"."h_target_house_id" FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1  [["g_game_board_player_id", 14]]
+  [1m[36m (0.2ms)[0m  [1mSELECT "al_houses"."last_bet" FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1 AND "al_houses"."h_house_id" = $2[0m  [["g_game_board_player_id", 14], ["h_house_id", 3]]
+  [1m[35mAlBet Load (0.3ms)[0m  SELECT  "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1 AND "al_bets"."h_target_house_id" = $2 AND (bet >= 20)  ORDER BY bet DESC LIMIT 1  [["g_game_board_player_id", 14], ["h_target_house_id", 3]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."id" = $1 LIMIT 1[0m  [["id", 5]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."id" = $1 LIMIT 1  [["id", 3]]
+  [1m[36mAlHouse Load (0.3ms)[0m  [1mSELECT  "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1 AND "al_houses"."h_house_id" = $2 LIMIT 1[0m  [["g_game_board_player_id", 14], ["h_house_id", 5]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT "h_houses".* FROM "h_houses" WHERE "h_houses"."h_suzerain_house_id" = $1  [["h_suzerain_house_id", 3]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT "h_houses".* FROM "h_houses" WHERE "h_houses"."h_suzerain_house_id" = $1[0m  [["h_suzerain_house_id", 5]]
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2  [["g_game_board_player_id", 14], ["h_house_id", 5]]
+  [1m[36mSQL (0.3ms)[0m  [1mDELETE FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1 AND "al_enemies"."h_house_id" IN (5, 6, 3, 4) AND "al_enemies"."h_enemy_house_id" IN (3, 4)[0m  [["g_game_board_player_id", 14]]
+  [1m[35mSQL (0.4ms)[0m  DELETE FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1 AND "al_enemies"."h_house_id" IN (3, 4) AND "al_enemies"."h_enemy_house_id" IN (5, 6, 3, 4)  [["g_game_board_player_id", 14]]
+  [1m[36mAlHouse Load (0.3ms)[0m  [1mSELECT  "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1 AND "al_houses"."h_house_id" = $2  ORDER BY "al_houses"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 14], ["h_house_id", 3]]
+  [1m[35mSQL (0.3ms)[0m  UPDATE "al_houses" SET "last_bet" = $1, "updated_at" = $2 WHERE "al_houses"."id" = $3  [["last_bet", 20], ["updated_at", "2016-05-06 10:09:19.302665"], ["id", 1]]
+  [1m[36mAlHouse Load (0.4ms)[0m  [1mSELECT  "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1 AND "al_houses"."h_house_id" = $2  ORDER BY "al_houses"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 14], ["h_house_id", 4]]
+  [1m[35mSQL (0.2ms)[0m  UPDATE "al_houses" SET "last_bet" = $1, "updated_at" = $2 WHERE "al_houses"."id" = $3  [["last_bet", 20], ["updated_at", "2016-05-06 10:09:19.307090"], ["id", 2]]
+  [1m[36mSQL (0.3ms)[0m  [1mDELETE FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" IN (3, 4)[0m  [["g_game_board_player_id", 14]]
+  [1m[35mAlAlliance Load (0.1ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 5], ["h_peer_house_id", 6]]
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 5], ["h_peer_house_id", 6], ["created_at", "2016-05-06 10:09:19.310962"], ["updated_at", "2016-05-06 10:09:19.310962"]]
+  [1m[35mAlAlliance Load (0.1ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 5], ["h_peer_house_id", 3]]
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 5], ["h_peer_house_id", 3], ["created_at", "2016-05-06 10:09:19.313550"], ["updated_at", "2016-05-06 10:09:19.313550"]]
+  [1m[35mAlAlliance Load (0.1ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 5], ["h_peer_house_id", 4]]
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 5], ["h_peer_house_id", 4], ["created_at", "2016-05-06 10:09:19.315946"], ["updated_at", "2016-05-06 10:09:19.315946"]]
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 6], ["h_peer_house_id", 5]]
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 6], ["h_peer_house_id", 5], ["created_at", "2016-05-06 10:09:19.318440"], ["updated_at", "2016-05-06 10:09:19.318440"]]
+  [1m[35mAlAlliance Load (0.1ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 6], ["h_peer_house_id", 3]]
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 6], ["h_peer_house_id", 3], ["created_at", "2016-05-06 10:09:19.321437"], ["updated_at", "2016-05-06 10:09:19.321437"]]
+  [1m[35mAlAlliance Load (0.1ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 6], ["h_peer_house_id", 4]]
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 6], ["h_peer_house_id", 4], ["created_at", "2016-05-06 10:09:19.323843"], ["updated_at", "2016-05-06 10:09:19.323843"]]
+  [1m[35mAlAlliance Load (0.1ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 3], ["h_peer_house_id", 5]]
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 3], ["h_peer_house_id", 5], ["created_at", "2016-05-06 10:09:19.326403"], ["updated_at", "2016-05-06 10:09:19.326403"]]
+  [1m[35mAlAlliance Load (0.1ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 3], ["h_peer_house_id", 6]]
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 3], ["h_peer_house_id", 6], ["created_at", "2016-05-06 10:09:19.328744"], ["updated_at", "2016-05-06 10:09:19.328744"]]
+  [1m[35mAlAlliance Load (0.1ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 3], ["h_peer_house_id", 4]]
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 3], ["h_peer_house_id", 4], ["created_at", "2016-05-06 10:09:19.331086"], ["updated_at", "2016-05-06 10:09:19.331086"]]
+  [1m[35mAlAlliance Load (0.1ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 4], ["h_peer_house_id", 5]]
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 4], ["h_peer_house_id", 5], ["created_at", "2016-05-06 10:09:19.333315"], ["updated_at", "2016-05-06 10:09:19.333315"]]
+  [1m[35mAlAlliance Load (0.1ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 4], ["h_peer_house_id", 6]]
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 4], ["h_peer_house_id", 6], ["created_at", "2016-05-06 10:09:19.335463"], ["updated_at", "2016-05-06 10:09:19.335463"]]
+  [1m[35mAlAlliance Load (0.1ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 4], ["h_peer_house_id", 3]]
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 14], ["h_house_id", 4], ["h_peer_house_id", 3], ["created_at", "2016-05-06 10:09:19.337727"], ["updated_at", "2016-05-06 10:09:19.337727"]]
+  [1m[35mSQL (0.2ms)[0m  DELETE FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1  [["g_game_board_player_id", 14]]
+  [1m[36m (1.0ms)[0m  [1mCOMMIT[0m
+  [1m[35mAlAlliance Exists (0.6ms)[0m  SELECT  1 AS one FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3 LIMIT 1  [["g_game_board_player_id", 14], ["h_house_id", 5], ["h_peer_house_id", 3]]
+  [1m[36mHHouse Load (0.4ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "stark"]]
+  [1m[35mHHouse Load (0.4ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "karstark"]]
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35m (0.1ms)[0m  COMMIT
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "lannister"]]
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "cendermark"]]
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35m (0.2ms)[0m  COMMIT
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "greyjoy"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "pyk"]]
+  [1m[36m (0.1ms)[0m  [1mBEGIN[0m
+  [1m[35m (0.1ms)[0m  COMMIT
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tyrell"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tarly"]]
+  [1m[36m (0.3ms)[0m  [1mBEGIN[0m
+  [1m[35m (0.3ms)[0m  COMMIT
+  [1m[36mGGameBoardPlayer Load (0.5ms)[0m  [1mSELECT "g_game_board_players".* FROM "g_game_board_players"[0m
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36mAlAlliance Load (0.4ms)[0m  [1mSELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 14]]
+  [1m[35mSQL (0.4ms)[0m  DELETE FROM "al_alliances" WHERE "al_alliances"."id" = $1  [["id", 1]]
+  [1m[36mSQL (0.3ms)[0m  [1mDELETE FROM "al_alliances" WHERE "al_alliances"."id" = $1[0m  [["id", 2]]
+  [1m[35mSQL (0.2ms)[0m  DELETE FROM "al_alliances" WHERE "al_alliances"."id" = $1  [["id", 3]]
+  [1m[36mSQL (0.2ms)[0m  [1mDELETE FROM "al_alliances" WHERE "al_alliances"."id" = $1[0m  [["id", 4]]
+  [1m[35mSQL (0.2ms)[0m  DELETE FROM "al_alliances" WHERE "al_alliances"."id" = $1  [["id", 5]]
+  [1m[36mSQL (0.2ms)[0m  [1mDELETE FROM "al_alliances" WHERE "al_alliances"."id" = $1[0m  [["id", 6]]
+  [1m[35mSQL (0.2ms)[0m  DELETE FROM "al_alliances" WHERE "al_alliances"."id" = $1  [["id", 13]]
+  [1m[36mSQL (0.2ms)[0m  [1mDELETE FROM "al_alliances" WHERE "al_alliances"."id" = $1[0m  [["id", 14]]
+  [1m[35mSQL (0.2ms)[0m  DELETE FROM "al_alliances" WHERE "al_alliances"."id" = $1  [["id", 15]]
+  [1m[36mSQL (0.2ms)[0m  [1mDELETE FROM "al_alliances" WHERE "al_alliances"."id" = $1[0m  [["id", 16]]
+  [1m[35mSQL (0.2ms)[0m  DELETE FROM "al_alliances" WHERE "al_alliances"."id" = $1  [["id", 17]]
+  [1m[36mSQL (0.2ms)[0m  [1mDELETE FROM "al_alliances" WHERE "al_alliances"."id" = $1[0m  [["id", 18]]
+  [1m[35mSQL (0.2ms)[0m  DELETE FROM "al_alliances" WHERE "al_alliances"."id" = $1  [["id", 19]]
+  [1m[36mSQL (0.2ms)[0m  [1mDELETE FROM "al_alliances" WHERE "al_alliances"."id" = $1[0m  [["id", 20]]
+  [1m[35mSQL (0.1ms)[0m  DELETE FROM "al_alliances" WHERE "al_alliances"."id" = $1  [["id", 21]]
+  [1m[36mSQL (0.2ms)[0m  [1mDELETE FROM "al_alliances" WHERE "al_alliances"."id" = $1[0m  [["id", 22]]
+  [1m[35mSQL (0.3ms)[0m  DELETE FROM "al_alliances" WHERE "al_alliances"."id" = $1  [["id", 23]]
+  [1m[36mSQL (0.2ms)[0m  [1mDELETE FROM "al_alliances" WHERE "al_alliances"."id" = $1[0m  [["id", 24]]
+  [1m[35mAlHouse Load (0.4ms)[0m  SELECT "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1  [["g_game_board_player_id", 14]]
+  [1m[36mSQL (0.3ms)[0m  [1mDELETE FROM "al_houses" WHERE "al_houses"."id" = $1[0m  [["id", 1]]
+  [1m[35mSQL (0.2ms)[0m  DELETE FROM "al_houses" WHERE "al_houses"."id" = $1  [["id", 2]]
+  [1m[36mAlBet Load (0.3ms)[0m  [1mSELECT "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 14]]
+  [1m[35mAlEnemy Load (0.3ms)[0m  SELECT "al_enemies".* FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1  [["g_game_board_player_id", 14]]
+  [1m[36mSQL (0.7ms)[0m  [1mDELETE FROM "g_game_board_players" WHERE "g_game_board_players"."id" = $1[0m  [["id", 14]]
+  [1m[35m (0.7ms)[0m  COMMIT
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "g_game_board_players" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"  [["created_at", "2016-05-06 10:09:19.381291"], ["updated_at", "2016-05-06 10:09:19.381291"]]
+  [1m[36m (0.6ms)[0m  [1mCOMMIT[0m
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "stark"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "lannister"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "cendermark"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "karstark"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "greyjoy"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tyrell"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "pyk"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tarly"]]
+  [1m[35mAlBet Load (0.4ms)[0m  SELECT  "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1 AND "al_bets"."h_house_id" = $2 AND "al_bets"."h_target_house_id" = $3  ORDER BY "al_bets"."id" ASC LIMIT 1  [["g_game_board_player_id", 15], ["h_house_id", 1], ["h_target_house_id", 3]]
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "al_bets" ("g_game_board_player_id", "h_house_id", "h_target_house_id", "bet", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"  [["g_game_board_player_id", 15], ["h_house_id", 1], ["h_target_house_id", 3], ["bet", 10], ["created_at", "2016-05-06 10:09:19.388631"], ["updated_at", "2016-05-06 10:09:19.388631"]]
+  [1m[36m (0.7ms)[0m  [1mCOMMIT[0m
+  [1m[35m (0.3ms)[0m  SELECT "al_bets"."bet" FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1 AND "al_bets"."h_house_id" = $2 AND "al_bets"."h_target_house_id" = $3  [["g_game_board_player_id", 15], ["h_house_id", 1], ["h_target_house_id", 3]]
+  [1m[36mAlBet Load (0.3ms)[0m  [1mSELECT  "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1 AND "al_bets"."h_house_id" = $2 AND "al_bets"."h_target_house_id" = $3  ORDER BY "al_bets"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 15], ["h_house_id", 1], ["h_target_house_id", 3]]
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36mSQL (0.3ms)[0m  [1mUPDATE "al_bets" SET "bet" = $1, "updated_at" = $2 WHERE "al_bets"."id" = $3[0m  [["bet", 20], ["updated_at", "2016-05-06 10:09:19.393466"], ["id", 4]]
+  [1m[35m (0.7ms)[0m  COMMIT
+  [1m[36m (0.4ms)[0m  [1mSELECT "al_bets"."bet" FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1 AND "al_bets"."h_house_id" = $2 AND "al_bets"."h_target_house_id" = $3[0m  [["g_game_board_player_id", 15], ["h_house_id", 1], ["h_target_house_id", 3]]
+  [1m[35mAlBet Load (0.2ms)[0m  SELECT  "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1 AND "al_bets"."h_house_id" = $2 AND "al_bets"."h_target_house_id" = $3  ORDER BY "al_bets"."id" ASC LIMIT 1  [["g_game_board_player_id", 15], ["h_house_id", 1], ["h_target_house_id", 5]]
+  [1m[36m (0.1ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "al_bets" ("g_game_board_player_id", "h_house_id", "h_target_house_id", "bet", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"  [["g_game_board_player_id", 15], ["h_house_id", 1], ["h_target_house_id", 5], ["bet", 30], ["created_at", "2016-05-06 10:09:19.398774"], ["updated_at", "2016-05-06 10:09:19.398774"]]
+  [1m[36m (0.6ms)[0m  [1mCOMMIT[0m
+  [1m[35m (0.3ms)[0m  SELECT "al_bets"."bet" FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1 AND "al_bets"."h_house_id" = $2 AND "al_bets"."h_target_house_id" = $3  [["g_game_board_player_id", 15], ["h_house_id", 1], ["h_target_house_id", 3]]
+  [1m[36m (0.3ms)[0m  [1mSELECT "al_bets"."bet" FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1 AND "al_bets"."h_house_id" = $2 AND "al_bets"."h_target_house_id" = $3[0m  [["g_game_board_player_id", 15], ["h_house_id", 1], ["h_target_house_id", 5]]
+  [1m[35m (0.2ms)[0m  SELECT "al_bets"."bet" FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1 AND "al_bets"."h_house_id" = $2 AND "al_bets"."h_target_house_id" = $3  [["g_game_board_player_id", 15], ["h_house_id", 1], ["h_target_house_id", 1]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "stark"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "karstark"]]
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35m (0.2ms)[0m  COMMIT
+  [1m[36mHHouse Load (0.9ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "lannister"]]
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "cendermark"]]
+  [1m[36m (0.1ms)[0m  [1mBEGIN[0m
+  [1m[35m (0.1ms)[0m  COMMIT
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "greyjoy"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "pyk"]]
+  [1m[36m (0.1ms)[0m  [1mBEGIN[0m
+  [1m[35m (0.2ms)[0m  COMMIT
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tyrell"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "tarly"]]
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35m (0.2ms)[0m  COMMIT
+  [1m[36mGGameBoardPlayer Load (0.3ms)[0m  [1mSELECT "g_game_board_players".* FROM "g_game_board_players"[0m
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 15]]
+  [1m[35mAlHouse Load (0.2ms)[0m  SELECT "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1  [["g_game_board_player_id", 15]]
+  [1m[36mAlBet Load (0.3ms)[0m  [1mSELECT "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 15]]
+  [1m[35mSQL (0.3ms)[0m  DELETE FROM "al_bets" WHERE "al_bets"."id" = $1  [["id", 4]]
+  [1m[36mSQL (0.7ms)[0m  [1mDELETE FROM "al_bets" WHERE "al_bets"."id" = $1[0m  [["id", 5]]
+  [1m[35mAlEnemy Load (0.3ms)[0m  SELECT "al_enemies".* FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1  [["g_game_board_player_id", 15]]
+  [1m[36mSQL (0.5ms)[0m  [1mDELETE FROM "g_game_board_players" WHERE "g_game_board_players"."id" = $1[0m  [["id", 15]]
+  [1m[35m (0.8ms)[0m  COMMIT
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "g_game_board_players" ("created_at", "updated_at") VALUES ($1, $2) RETURNING "id"  [["created_at", "2016-05-06 10:09:19.423600"], ["updated_at", "2016-05-06 10:09:19.423600"]]
+  [1m[36m (0.8ms)[0m  [1mCOMMIT[0m
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "stark"]]
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "lannister"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "cendermark"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "karstark"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "greyjoy"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tyrell"]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1  [["code_name", "pyk"]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."code_name" = $1 LIMIT 1[0m  [["code_name", "tarly"]]
+  [1m[35mAlBet Load (0.2ms)[0m  SELECT  "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1 AND "al_bets"."h_house_id" = $2 AND "al_bets"."h_target_house_id" = $3  ORDER BY "al_bets"."id" ASC LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 1], ["h_target_house_id", 3]]
+  [1m[36m (0.1ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "al_bets" ("g_game_board_player_id", "h_house_id", "h_target_house_id", "bet", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 1], ["h_target_house_id", 3], ["bet", 10], ["created_at", "2016-05-06 10:09:19.432054"], ["updated_at", "2016-05-06 10:09:19.432054"]]
+  [1m[36m (0.9ms)[0m  [1mCOMMIT[0m
+  [1m[35mAlBet Load (0.3ms)[0m  SELECT  "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1 AND "al_bets"."h_house_id" = $2 AND "al_bets"."h_target_house_id" = $3  ORDER BY "al_bets"."id" ASC LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 5], ["h_target_house_id", 3]]
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_bets" ("g_game_board_player_id", "h_house_id", "h_target_house_id", "bet", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 5], ["h_target_house_id", 3], ["bet", 20], ["created_at", "2016-05-06 10:09:19.436480"], ["updated_at", "2016-05-06 10:09:19.436480"]]
+  [1m[36m (0.6ms)[0m  [1mCOMMIT[0m
+  [1m[35mAlBet Load (0.2ms)[0m  SELECT  "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1 AND "al_bets"."h_house_id" = $2 AND "al_bets"."h_target_house_id" = $3  ORDER BY "al_bets"."id" ASC LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 5], ["h_target_house_id", 7]]
+  [1m[36m (0.1ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_bets" ("g_game_board_player_id", "h_house_id", "h_target_house_id", "bet", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 5], ["h_target_house_id", 7], ["bet", 20], ["created_at", "2016-05-06 10:09:19.440001"], ["updated_at", "2016-05-06 10:09:19.440001"]]
+  [1m[36m (0.7ms)[0m  [1mCOMMIT[0m
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (0.4ms)[0m  [1mSELECT DISTINCT "al_bets"."h_target_house_id" FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 16]]
+  [1m[35m (0.3ms)[0m  SELECT "al_houses"."last_bet" FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1 AND "al_houses"."h_house_id" = $2  [["g_game_board_player_id", 16], ["h_house_id", 3]]
+  [1m[36mAlBet Load (0.3ms)[0m  [1mSELECT  "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1 AND "al_bets"."h_target_house_id" = $2 AND (bet >= 2)  ORDER BY bet DESC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_target_house_id", 3]]
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."id" = $1 LIMIT 1  [["id", 5]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."id" = $1 LIMIT 1[0m  [["id", 3]]
+  [1m[35mAlHouse Load (0.2ms)[0m  SELECT  "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1 AND "al_houses"."h_house_id" = $2 LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 5]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT "h_houses".* FROM "h_houses" WHERE "h_houses"."h_suzerain_house_id" = $1[0m  [["h_suzerain_house_id", 3]]
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT "h_houses".* FROM "h_houses" WHERE "h_houses"."h_suzerain_house_id" = $1  [["h_suzerain_house_id", 5]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2[0m  [["g_game_board_player_id", 16], ["h_house_id", 5]]
+  [1m[35mSQL (0.3ms)[0m  DELETE FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1 AND "al_enemies"."h_house_id" IN (5, 6, 3, 4) AND "al_enemies"."h_enemy_house_id" IN (3, 4)  [["g_game_board_player_id", 16]]
+  [1m[36mSQL (0.3ms)[0m  [1mDELETE FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1 AND "al_enemies"."h_house_id" IN (3, 4) AND "al_enemies"."h_enemy_house_id" IN (5, 6, 3, 4)[0m  [["g_game_board_player_id", 16]]
+  [1m[35mAlHouse Load (0.3ms)[0m  SELECT  "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1 AND "al_houses"."h_house_id" = $2  ORDER BY "al_houses"."id" ASC LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 3]]
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "al_houses" ("g_game_board_player_id", "h_house_id", "minor_alliance_member", "last_bet", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["g_game_board_player_id", 16], ["h_house_id", 3], ["minor_alliance_member", "t"], ["last_bet", 20], ["created_at", "2016-05-06 10:09:19.453946"], ["updated_at", "2016-05-06 10:09:19.453946"]]
+  [1m[35mAlHouse Load (0.3ms)[0m  SELECT  "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1 AND "al_houses"."h_house_id" = $2  ORDER BY "al_houses"."id" ASC LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 4]]
+  [1m[36mSQL (0.5ms)[0m  [1mINSERT INTO "al_houses" ("g_game_board_player_id", "h_house_id", "minor_alliance_member", "last_bet", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["g_game_board_player_id", 16], ["h_house_id", 4], ["minor_alliance_member", "t"], ["last_bet", 20], ["created_at", "2016-05-06 10:09:19.457230"], ["updated_at", "2016-05-06 10:09:19.457230"]]
+  [1m[35mSQL (0.3ms)[0m  DELETE FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" IN (3, 4)  [["g_game_board_player_id", 16]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 5], ["h_peer_house_id", 6]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 5], ["h_peer_house_id", 6], ["created_at", "2016-05-06 10:09:19.462551"], ["updated_at", "2016-05-06 10:09:19.462551"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 5], ["h_peer_house_id", 3]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 5], ["h_peer_house_id", 3], ["created_at", "2016-05-06 10:09:19.464920"], ["updated_at", "2016-05-06 10:09:19.464920"]]
+  [1m[36mAlAlliance Load (0.3ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 5], ["h_peer_house_id", 4]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 5], ["h_peer_house_id", 4], ["created_at", "2016-05-06 10:09:19.467369"], ["updated_at", "2016-05-06 10:09:19.467369"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 6], ["h_peer_house_id", 5]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 6], ["h_peer_house_id", 5], ["created_at", "2016-05-06 10:09:19.469589"], ["updated_at", "2016-05-06 10:09:19.469589"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 6], ["h_peer_house_id", 3]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 6], ["h_peer_house_id", 3], ["created_at", "2016-05-06 10:09:19.471571"], ["updated_at", "2016-05-06 10:09:19.471571"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 6], ["h_peer_house_id", 4]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 6], ["h_peer_house_id", 4], ["created_at", "2016-05-06 10:09:19.473810"], ["updated_at", "2016-05-06 10:09:19.473810"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 3], ["h_peer_house_id", 5]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 3], ["h_peer_house_id", 5], ["created_at", "2016-05-06 10:09:19.476409"], ["updated_at", "2016-05-06 10:09:19.476409"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 3], ["h_peer_house_id", 6]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 3], ["h_peer_house_id", 6], ["created_at", "2016-05-06 10:09:19.479032"], ["updated_at", "2016-05-06 10:09:19.479032"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 3], ["h_peer_house_id", 4]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 3], ["h_peer_house_id", 4], ["created_at", "2016-05-06 10:09:19.481191"], ["updated_at", "2016-05-06 10:09:19.481191"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 4], ["h_peer_house_id", 5]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 4], ["h_peer_house_id", 5], ["created_at", "2016-05-06 10:09:19.483416"], ["updated_at", "2016-05-06 10:09:19.483416"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 4], ["h_peer_house_id", 6]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 4], ["h_peer_house_id", 6], ["created_at", "2016-05-06 10:09:19.485505"], ["updated_at", "2016-05-06 10:09:19.485505"]]
+  [1m[36mAlAlliance Load (0.3ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 4], ["h_peer_house_id", 3]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 4], ["h_peer_house_id", 3], ["created_at", "2016-05-06 10:09:19.488113"], ["updated_at", "2016-05-06 10:09:19.488113"]]
+  [1m[36m (0.2ms)[0m  [1mSELECT "al_houses"."last_bet" FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1 AND "al_houses"."h_house_id" = $2[0m  [["g_game_board_player_id", 16], ["h_house_id", 7]]
+  [1m[35mAlBet Load (0.3ms)[0m  SELECT  "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1 AND "al_bets"."h_target_house_id" = $2 AND (bet >= 2)  ORDER BY bet DESC LIMIT 1  [["g_game_board_player_id", 16], ["h_target_house_id", 7]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."id" = $1 LIMIT 1[0m  [["id", 5]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."id" = $1 LIMIT 1  [["id", 7]]
+  [1m[36mAlHouse Load (0.2ms)[0m  [1mSELECT  "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1 AND "al_houses"."h_house_id" = $2 LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 5]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT "h_houses".* FROM "h_houses" WHERE "h_houses"."h_suzerain_house_id" = $1  [["h_suzerain_house_id", 7]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT "h_houses".* FROM "h_houses" WHERE "h_houses"."h_suzerain_house_id" = $1[0m  [["h_suzerain_house_id", 5]]
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2  [["g_game_board_player_id", 16], ["h_house_id", 5]]
+  [1m[36mHHouse Load (0.3ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."id" = $1 LIMIT 1[0m  [["id", 3]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."id" = $1 LIMIT 1  [["id", 4]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."id" = $1 LIMIT 1[0m  [["id", 6]]
+  [1m[35mSQL (0.3ms)[0m  DELETE FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1 AND "al_enemies"."h_house_id" IN (5, 6, 3, 4, 7, 8) AND "al_enemies"."h_enemy_house_id" IN (7, 8)  [["g_game_board_player_id", 16]]
+  [1m[36mSQL (0.2ms)[0m  [1mDELETE FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1 AND "al_enemies"."h_house_id" IN (7, 8) AND "al_enemies"."h_enemy_house_id" IN (5, 6, 3, 4, 7, 8)[0m  [["g_game_board_player_id", 16]]
+  [1m[35mAlHouse Load (0.2ms)[0m  SELECT  "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1 AND "al_houses"."h_house_id" = $2  ORDER BY "al_houses"."id" ASC LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 7]]
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "al_houses" ("g_game_board_player_id", "h_house_id", "minor_alliance_member", "last_bet", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["g_game_board_player_id", 16], ["h_house_id", 7], ["minor_alliance_member", "t"], ["last_bet", 20], ["created_at", "2016-05-06 10:09:19.500938"], ["updated_at", "2016-05-06 10:09:19.500938"]]
+  [1m[35mAlHouse Load (0.2ms)[0m  SELECT  "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1 AND "al_houses"."h_house_id" = $2  ORDER BY "al_houses"."id" ASC LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 8]]
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "al_houses" ("g_game_board_player_id", "h_house_id", "minor_alliance_member", "last_bet", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"[0m  [["g_game_board_player_id", 16], ["h_house_id", 8], ["minor_alliance_member", "t"], ["last_bet", 20], ["created_at", "2016-05-06 10:09:19.503496"], ["updated_at", "2016-05-06 10:09:19.503496"]]
+  [1m[35mSQL (0.2ms)[0m  DELETE FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" IN (7, 8)  [["g_game_board_player_id", 16]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 5], ["h_peer_house_id", 6]]
+  [1m[35mAlAlliance Load (0.3ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 5], ["h_peer_house_id", 3]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 5], ["h_peer_house_id", 4]]
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 5], ["h_peer_house_id", 7]]
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 16], ["h_house_id", 5], ["h_peer_house_id", 7], ["created_at", "2016-05-06 10:09:19.510352"], ["updated_at", "2016-05-06 10:09:19.510352"]]
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 5], ["h_peer_house_id", 8]]
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 16], ["h_house_id", 5], ["h_peer_house_id", 8], ["created_at", "2016-05-06 10:09:19.513031"], ["updated_at", "2016-05-06 10:09:19.513031"]]
+  [1m[35mAlAlliance Load (0.3ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 6], ["h_peer_house_id", 5]]
+  [1m[36mAlAlliance Load (0.3ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 6], ["h_peer_house_id", 3]]
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 6], ["h_peer_house_id", 4]]
+  [1m[36mAlAlliance Load (0.4ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 6], ["h_peer_house_id", 7]]
+  [1m[35mSQL (0.7ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 6], ["h_peer_house_id", 7], ["created_at", "2016-05-06 10:09:19.521908"], ["updated_at", "2016-05-06 10:09:19.521908"]]
+  [1m[36mAlAlliance Load (0.3ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 6], ["h_peer_house_id", 8]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 6], ["h_peer_house_id", 8], ["created_at", "2016-05-06 10:09:19.525596"], ["updated_at", "2016-05-06 10:09:19.525596"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 3], ["h_peer_house_id", 5]]
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 3], ["h_peer_house_id", 6]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 3], ["h_peer_house_id", 4]]
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 3], ["h_peer_house_id", 7]]
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 16], ["h_house_id", 3], ["h_peer_house_id", 7], ["created_at", "2016-05-06 10:09:19.529971"], ["updated_at", "2016-05-06 10:09:19.529971"]]
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 3], ["h_peer_house_id", 8]]
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"[0m  [["g_game_board_player_id", 16], ["h_house_id", 3], ["h_peer_house_id", 8], ["created_at", "2016-05-06 10:09:19.532068"], ["updated_at", "2016-05-06 10:09:19.532068"]]
+  [1m[35mAlAlliance Load (0.3ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 4], ["h_peer_house_id", 5]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 4], ["h_peer_house_id", 6]]
+  [1m[35mAlAlliance Load (0.2ms)[0m  SELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 4], ["h_peer_house_id", 3]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 4], ["h_peer_house_id", 7]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 4], ["h_peer_house_id", 7], ["created_at", "2016-05-06 10:09:19.536437"], ["updated_at", "2016-05-06 10:09:19.536437"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 4], ["h_peer_house_id", 8]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 4], ["h_peer_house_id", 8], ["created_at", "2016-05-06 10:09:19.538409"], ["updated_at", "2016-05-06 10:09:19.538409"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 7], ["h_peer_house_id", 5]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 7], ["h_peer_house_id", 5], ["created_at", "2016-05-06 10:09:19.540429"], ["updated_at", "2016-05-06 10:09:19.540429"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 7], ["h_peer_house_id", 6]]
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 7], ["h_peer_house_id", 6], ["created_at", "2016-05-06 10:09:19.542629"], ["updated_at", "2016-05-06 10:09:19.542629"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 7], ["h_peer_house_id", 3]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 7], ["h_peer_house_id", 3], ["created_at", "2016-05-06 10:09:19.544709"], ["updated_at", "2016-05-06 10:09:19.544709"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 7], ["h_peer_house_id", 4]]
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 7], ["h_peer_house_id", 4], ["created_at", "2016-05-06 10:09:19.546855"], ["updated_at", "2016-05-06 10:09:19.546855"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 7], ["h_peer_house_id", 8]]
+  [1m[35mSQL (0.5ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 7], ["h_peer_house_id", 8], ["created_at", "2016-05-06 10:09:19.549385"], ["updated_at", "2016-05-06 10:09:19.549385"]]
+  [1m[36mAlAlliance Load (0.4ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 8], ["h_peer_house_id", 5]]
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 8], ["h_peer_house_id", 5], ["created_at", "2016-05-06 10:09:19.553582"], ["updated_at", "2016-05-06 10:09:19.553582"]]
+  [1m[36mAlAlliance Load (0.3ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 8], ["h_peer_house_id", 6]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 8], ["h_peer_house_id", 6], ["created_at", "2016-05-06 10:09:19.556461"], ["updated_at", "2016-05-06 10:09:19.556461"]]
+  [1m[36mAlAlliance Load (0.3ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 8], ["h_peer_house_id", 3]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 8], ["h_peer_house_id", 3], ["created_at", "2016-05-06 10:09:19.558972"], ["updated_at", "2016-05-06 10:09:19.558972"]]
+  [1m[36mAlAlliance Load (0.3ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 8], ["h_peer_house_id", 4]]
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 8], ["h_peer_house_id", 4], ["created_at", "2016-05-06 10:09:19.561531"], ["updated_at", "2016-05-06 10:09:19.561531"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 8], ["h_peer_house_id", 7]]
+  [1m[35mSQL (0.6ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 8], ["h_peer_house_id", 7], ["created_at", "2016-05-06 10:09:19.563795"], ["updated_at", "2016-05-06 10:09:19.563795"]]
+  [1m[36mSQL (0.6ms)[0m  [1mDELETE FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 16]]
+  [1m[35m (2.5ms)[0m  COMMIT
+  [1m[36mAlAlliance Exists (0.4ms)[0m  [1mSELECT  1 AS one FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3 LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 5], ["h_peer_house_id", 3]]
+  [1m[35mAlAlliance Exists (0.3ms)[0m  SELECT  1 AS one FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3 LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 5], ["h_peer_house_id", 7]]
+  [1m[36mAlAlliance Exists (0.3ms)[0m  [1mSELECT  1 AS one FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3 LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 3], ["h_peer_house_id", 1]]
+  [1m[35mAlBet Load (0.3ms)[0m  SELECT  "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1 AND "al_bets"."h_house_id" = $2 AND "al_bets"."h_target_house_id" = $3  ORDER BY "al_bets"."id" ASC LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 1], ["h_target_house_id", 3]]
+  [1m[36m (0.2ms)[0m  [1mBEGIN[0m
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "al_bets" ("g_game_board_player_id", "h_house_id", "h_target_house_id", "bet", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5, $6) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 1], ["h_target_house_id", 3], ["bet", 40], ["created_at", "2016-05-06 10:09:19.575380"], ["updated_at", "2016-05-06 10:09:19.575380"]]
+  [1m[36m (0.8ms)[0m  [1mCOMMIT[0m
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (0.9ms)[0m  [1mSELECT DISTINCT "al_bets"."h_target_house_id" FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 16]]
+  [1m[35m (0.3ms)[0m  SELECT "al_houses"."last_bet" FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1 AND "al_houses"."h_house_id" = $2  [["g_game_board_player_id", 16], ["h_house_id", 3]]
+  [1m[36mAlBet Load (0.3ms)[0m  [1mSELECT  "al_bets".* FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1 AND "al_bets"."h_target_house_id" = $2 AND (bet >= 40)  ORDER BY bet DESC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_target_house_id", 3]]
+  [1m[35mHHouse Load (0.3ms)[0m  SELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."id" = $1 LIMIT 1  [["id", 1]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT  "h_houses".* FROM "h_houses" WHERE "h_houses"."id" = $1 LIMIT 1[0m  [["id", 3]]
+  [1m[35mAlHouse Load (0.2ms)[0m  SELECT  "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1 AND "al_houses"."h_house_id" = $2 LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 1]]
+  [1m[36mHHouse Load (0.2ms)[0m  [1mSELECT "h_houses".* FROM "h_houses" WHERE "h_houses"."h_suzerain_house_id" = $1[0m  [["h_suzerain_house_id", 3]]
+  [1m[35mHHouse Load (0.2ms)[0m  SELECT "h_houses".* FROM "h_houses" WHERE "h_houses"."h_suzerain_house_id" = $1  [["h_suzerain_house_id", 1]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2[0m  [["g_game_board_player_id", 16], ["h_house_id", 1]]
+  [1m[35mSQL (0.3ms)[0m  DELETE FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1 AND "al_enemies"."h_house_id" IN (1, 2, 3, 4) AND "al_enemies"."h_enemy_house_id" IN (3, 4)  [["g_game_board_player_id", 16]]
+  [1m[36mSQL (0.3ms)[0m  [1mDELETE FROM "al_enemies" WHERE "al_enemies"."g_game_board_player_id" = $1 AND "al_enemies"."h_house_id" IN (3, 4) AND "al_enemies"."h_enemy_house_id" IN (1, 2, 3, 4)[0m  [["g_game_board_player_id", 16]]
+  [1m[35mAlHouse Load (0.3ms)[0m  SELECT  "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1 AND "al_houses"."h_house_id" = $2  ORDER BY "al_houses"."id" ASC LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 3]]
+  [1m[36mSQL (0.3ms)[0m  [1mUPDATE "al_houses" SET "last_bet" = $1, "updated_at" = $2 WHERE "al_houses"."id" = $3[0m  [["last_bet", 40], ["updated_at", "2016-05-06 10:09:19.589760"], ["id", 3]]
+  [1m[35mAlHouse Load (0.4ms)[0m  SELECT  "al_houses".* FROM "al_houses" WHERE "al_houses"."g_game_board_player_id" = $1 AND "al_houses"."h_house_id" = $2  ORDER BY "al_houses"."id" ASC LIMIT 1  [["g_game_board_player_id", 16], ["h_house_id", 4]]
+  [1m[36mSQL (0.3ms)[0m  [1mUPDATE "al_houses" SET "last_bet" = $1, "updated_at" = $2 WHERE "al_houses"."id" = $3[0m  [["last_bet", 40], ["updated_at", "2016-05-06 10:09:19.592262"], ["id", 4]]
+  [1m[35mSQL (0.3ms)[0m  DELETE FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" IN (3, 4)  [["g_game_board_player_id", 16]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 1], ["h_peer_house_id", 2]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 1], ["h_peer_house_id", 2], ["created_at", "2016-05-06 10:09:19.595736"], ["updated_at", "2016-05-06 10:09:19.595736"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 1], ["h_peer_house_id", 3]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 1], ["h_peer_house_id", 3], ["created_at", "2016-05-06 10:09:19.598176"], ["updated_at", "2016-05-06 10:09:19.598176"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 1], ["h_peer_house_id", 4]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 1], ["h_peer_house_id", 4], ["created_at", "2016-05-06 10:09:19.600433"], ["updated_at", "2016-05-06 10:09:19.600433"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 2], ["h_peer_house_id", 1]]
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 2], ["h_peer_house_id", 1], ["created_at", "2016-05-06 10:09:19.602576"], ["updated_at", "2016-05-06 10:09:19.602576"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 2], ["h_peer_house_id", 3]]
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 2], ["h_peer_house_id", 3], ["created_at", "2016-05-06 10:09:19.604668"], ["updated_at", "2016-05-06 10:09:19.604668"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 2], ["h_peer_house_id", 4]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 2], ["h_peer_house_id", 4], ["created_at", "2016-05-06 10:09:19.606685"], ["updated_at", "2016-05-06 10:09:19.606685"]]
+  [1m[36mAlAlliance Load (0.3ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 3], ["h_peer_house_id", 1]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 3], ["h_peer_house_id", 1], ["created_at", "2016-05-06 10:09:19.609830"], ["updated_at", "2016-05-06 10:09:19.609830"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 3], ["h_peer_house_id", 2]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 3], ["h_peer_house_id", 2], ["created_at", "2016-05-06 10:09:19.612320"], ["updated_at", "2016-05-06 10:09:19.612320"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 3], ["h_peer_house_id", 4]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 3], ["h_peer_house_id", 4], ["created_at", "2016-05-06 10:09:19.614604"], ["updated_at", "2016-05-06 10:09:19.614604"]]
+  [1m[36mAlAlliance Load (0.3ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 4], ["h_peer_house_id", 1]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 4], ["h_peer_house_id", 1], ["created_at", "2016-05-06 10:09:19.616987"], ["updated_at", "2016-05-06 10:09:19.616987"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 4], ["h_peer_house_id", 2]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 4], ["h_peer_house_id", 2], ["created_at", "2016-05-06 10:09:19.619391"], ["updated_at", "2016-05-06 10:09:19.619391"]]
+  [1m[36mAlAlliance Load (0.2ms)[0m  [1mSELECT  "al_alliances".* FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3  ORDER BY "al_alliances"."id" ASC LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 4], ["h_peer_house_id", 3]]
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "al_alliances" ("g_game_board_player_id", "h_house_id", "h_peer_house_id", "created_at", "updated_at") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["g_game_board_player_id", 16], ["h_house_id", 4], ["h_peer_house_id", 3], ["created_at", "2016-05-06 10:09:19.621508"], ["updated_at", "2016-05-06 10:09:19.621508"]]
+  [1m[36mSQL (0.3ms)[0m  [1mDELETE FROM "al_bets" WHERE "al_bets"."g_game_board_player_id" = $1[0m  [["g_game_board_player_id", 16]]
+  [1m[35m (0.8ms)[0m  COMMIT
+  [1m[36mAlAlliance Exists (0.4ms)[0m  [1mSELECT  1 AS one FROM "al_alliances" WHERE "al_alliances"."g_game_board_player_id" = $1 AND "al_alliances"."h_house_id" = $2 AND "al_alliances"."h_peer_house_id" = $3 LIMIT 1[0m  [["g_game_board_player_id", 16], ["h_house_id", 3], ["h_peer_house_id", 1]]
+  [1m[35m (0.2ms)[0m  BEGIN
+------------------------
+FeodalisTest: test_truth
+------------------------
+  [1m[36m (0.3ms)[0m  [1mROLLBACK[0m

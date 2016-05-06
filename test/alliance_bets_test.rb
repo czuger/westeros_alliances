@@ -6,9 +6,21 @@ require_relative '../lib/al_alliance'
 require_relative '../lib/g_game_board_player'
 require 'pp'
 
-class TestAllianceBets < Minitest::Test
+class AllianceBetsTest < Minitest::Test
 
   def setup
+    @stark = HHouse.create_house( :stark )
+    @karstark = @stark.create_vassal( :karstark )
+
+    @lannister = HHouse.create_house( :lannister )
+    @cendermark = @lannister.create_vassal( :cendermark )
+
+    @greyjoy = HHouse.create_house( :greyjoy )
+    @pyk = @greyjoy.create_vassal( :pyk )
+
+    @tyrell = HHouse.create_house( :tyrell )
+    @tarly = @tyrell.create_vassal( :tarly )
+
     GGameBoardPlayer.destroy_all
     @gbp = GGameBoardPlayer.create!
 

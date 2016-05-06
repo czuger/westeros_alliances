@@ -1,6 +1,3 @@
-require_relative '../assert'
-require_relative '../al_bet'
-
 module GAlliancesBetEngine
 
   include Assert

@@ -1,7 +1,9 @@
 # A sample Gemfile
 source "https://rubygems.org"
 
-# gem "rails"
+gem 'rails'
+gem 'rake'
+gem 'bundler'
 
 gem 'activerecord'
 gem 'simplecov'
