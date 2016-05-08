@@ -13,8 +13,6 @@ module GAlliancesBetEngine
   #  All logs are stored in table as tuples ( game_board, house_asking, house_target, status, bet, min_bet )
   #  Status is an integer
 
-  # TODO : pluginize with : http://guides.rubyonrails.org/plugins.html
-
   # Set a new bet on a house, if the bet already exist, it is replaced
   def resolve_bets
     ActiveRecord::Base.transaction do

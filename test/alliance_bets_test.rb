@@ -1,37 +1,21 @@
-require 'minitest/autorun'
+require_relative 'test_helper'
 
-require_relative '../db/db_connect'
 require_relative '../lib/h_house'
 require_relative '../lib/al_alliance'
 require_relative '../lib/g_game_board_player'
+
 require 'pp'
 
-class AllianceBetsTest < Minitest::Test
+class AllianceBetsTest < ActiveSupport::TestCase
 
   def setup
-    @stark = HHouse.create_house( :stark )
-    @karstark = @stark.create_vassal( :karstark )
-
-    @lannister = HHouse.create_house( :lannister )
-    @cendermark = @lannister.create_vassal( :cendermark )
-
-    @greyjoy = HHouse.create_house( :greyjoy )
-    @pyk = @greyjoy.create_vassal( :pyk )
-
-    @tyrell = HHouse.create_house( :tyrell )
-    @tarly = @tyrell.create_vassal( :tarly )
-
     GGameBoardPlayer.destroy_all
     @gbp = GGameBoardPlayer.create!
 
-    @stark = HHouse.find_by_code_name( :stark )
-    @lannister = HHouse.find_by_code_name( :lannister )
-    @cendermark = HHouse.find_by_code_name( :cendermark )
-    @karstark = HHouse.find_by_code_name( :karstark )
-    @greyjoy = HHouse.find_by_code_name( :greyjoy )
-    @tyrell = HHouse.find_by_code_name( :tyrell )
-    @pyk = HHouse.find_by_code_name( :pyk )
-    @tarly = HHouse.find_by_code_name( :tarly )
+    @stark, @karstark = HHouse.create_house_and_vassals( :stark, :karstark )
+    @lannister, @cendermark = HHouse.create_house_and_vassals( :lannister, :cendermark )
+    @greyjoy, @pyk = HHouse.create_house_and_vassals( :greyjoy, :pyk )
+    @tyrell, @tarly = HHouse.create_house_and_vassals( :tyrell, :tarly )
   end
 
   # def test_alliances_group
