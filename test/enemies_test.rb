@@ -37,7 +37,6 @@ class EnemiesTest < ActiveSupport::TestCase
     # pp @gbp.al_alliances.all.map{ |e| [ e.h_house.code_name, e.h_peer_house.code_name ].join( ', ' ) }.to_a
     # pp @gbp.al_enemies.all.map{ |e| [ e.h_house.code_name, e.h_peer_house.code_name ].join( ', ' ) }.to_a
 
-
     assert @gbp.allied?( @stark, @greyjoy )
     assert @gbp.allied?( @stark, @pyk )
     assert @gbp.enemies?( @stark, @lannister )
