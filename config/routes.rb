@@ -1,2 +1,2 @@
-Feodalis::Engine.routes.draw do
+WesterosAlliances::Engine.routes.draw do
 end

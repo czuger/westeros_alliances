@@ -1,12 +1,12 @@
 $:.push File.expand_path("../lib", __FILE__)
 
 # Maintain your gem's version:
-require "feodalis/version"
+require "westeros_alliances/version"
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
   s.name        = "feodalis"
-  s.version     = Feodalis::VERSION
+  s.version     = WesterosAlliances::VERSION
   s.authors     = ["Zuger Cédric"]
   s.email       = ["zuger.cedric@gmail.com"]
   s.homepage    = "TODO"

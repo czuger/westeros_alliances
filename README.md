@@ -1,7 +1,7 @@
 [![Code Climate](https://codeclimate.com/github/czuger/feodalis/badges/gpa.svg)](https://codeclimate.com/github/czuger/feodalis)
 [![Test Coverage](https://codeclimate.com/github/czuger/feodalis/badges/coverage.svg)](https://codeclimate.com/github/czuger/feodalis/coverage)
 
-# Feodalis
+# Westeros Alliances
 
 This dev is designed to be included in a bigger project. It's an old project about game of thrones I have to finalize.
 
