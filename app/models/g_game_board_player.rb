@@ -1,12 +1,12 @@
-require_relative 'al_alliance'
-require_relative 'al_house'
-require_relative 'al_bet'
-require_relative 'assert'
-require_relative 'al_enemy'
-
-require_relative 'alliances_engine/g_alliances_bet_engine'
-require_relative 'alliances_engine/g_enemies_core_engine'
-require_relative 'alliances_engine/g_alliance_core_engine'
+# require_relative 'al_alliance'
+# require_relative 'al_house'
+# require_relative 'al_bet'
+# require_relative 'assert'
+# require_relative 'al_enemy'
+#
+# require_relative 'alliances_engine/g_alliances_bet_engine'
+# require_relative 'alliances_engine/g_enemies_core_engine'
+# require_relative 'alliances_engine/g_alliance_core_engine'
 
 class GGameBoardPlayer < ActiveRecord::Base
 
@@ -15,9 +15,11 @@ class GGameBoardPlayer < ActiveRecord::Base
   has_many :al_houses, dependent: :destroy
   has_many :al_bets, dependent: :destroy
 
-  include GAlliancesBetEngine
-  include GAllianceCoreEngine
-  include GEnemiesCoreEngine
+  belongs_to :g_game_board
+
+  include AlliancesEngine::GAlliancesBetEngine
+  include AlliancesEngine::GAllianceCoreEngine
+  include AlliancesEngine::GEnemiesCoreEngine
 
   # give all allies, enemies or neutral houses for a house
   def alliances_hash( house )

@@ -1,8 +1,4 @@
-require_relative 'test_helper'
-
-require_relative '../lib/h_house'
-require_relative '../lib/al_alliance'
-require_relative '../lib/g_game_board_player'
+require 'test_helper'
 
 require 'pp'
 

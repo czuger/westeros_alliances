@@ -13,9 +13,6 @@
 
 ActiveRecord::Schema.define(version: 20160506094209) do
 
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-
   create_table "al_bets", force: :cascade do |t|
     t.integer  "g_game_board_player_id",             null: false
     t.integer  "h_house_id",                         null: false
@@ -25,7 +22,7 @@ ActiveRecord::Schema.define(version: 20160506094209) do
     t.datetime "updated_at"
   end
 
-  add_index "al_bets", ["g_game_board_player_id", "h_house_id", "h_target_house_id"], name: "al_bets_unique_index", unique: true, using: :btree
+  add_index "al_bets", ["g_game_board_player_id", "h_house_id", "h_target_house_id"], name: "al_bets_unique_index", unique: true
 
   create_table "al_houses", force: :cascade do |t|
     t.integer  "g_game_board_player_id",                 null: false
@@ -36,7 +33,7 @@ ActiveRecord::Schema.define(version: 20160506094209) do
     t.datetime "updated_at"
   end
 
-  add_index "al_houses", ["g_game_board_player_id", "h_house_id"], name: "al_houses_unique_index", unique: true, using: :btree
+  add_index "al_houses", ["g_game_board_player_id", "h_house_id"], name: "al_houses_unique_index", unique: true
 
   create_table "al_relationships", force: :cascade do |t|
     t.integer  "g_game_board_player_id", null: false
@@ -47,8 +44,8 @@ ActiveRecord::Schema.define(version: 20160506094209) do
     t.datetime "updated_at"
   end
 
-  add_index "al_relationships", ["g_game_board_player_id", "h_house_id", "h_peer_house_id"], name: "al_relationships_unique_index", unique: true, using: :btree
-  add_index "al_relationships", ["type"], name: "index_al_relationships_on_type", using: :btree
+  add_index "al_relationships", ["g_game_board_player_id", "h_house_id", "h_peer_house_id"], name: "al_relationships_unique_index", unique: true
+  add_index "al_relationships", ["type"], name: "index_al_relationships_on_type"
 
   create_table "g_game_board_players", force: :cascade do |t|
     t.datetime "created_at"
@@ -62,16 +59,7 @@ ActiveRecord::Schema.define(version: 20160506094209) do
     t.datetime "updated_at"
   end
 
-  add_index "h_houses", ["code_name"], name: "index_h_houses_on_code_name", unique: true, using: :btree
-  add_index "h_houses", ["h_suzerain_house_id"], name: "index_h_houses_on_h_suzerain_house_id", using: :btree
+  add_index "h_houses", ["code_name"], name: "index_h_houses_on_code_name", unique: true
+  add_index "h_houses", ["h_suzerain_house_id"], name: "index_h_houses_on_h_suzerain_house_id"
 
-  add_foreign_key "al_bets", "g_game_board_players"
-  add_foreign_key "al_bets", "h_houses"
-  add_foreign_key "al_bets", "h_houses", column: "h_target_house_id"
-  add_foreign_key "al_houses", "g_game_board_players"
-  add_foreign_key "al_houses", "h_houses"
-  add_foreign_key "al_relationships", "g_game_board_players"
-  add_foreign_key "al_relationships", "h_houses"
-  add_foreign_key "al_relationships", "h_houses", column: "h_peer_house_id"
-  add_foreign_key "h_houses", "h_houses", column: "h_suzerain_house_id"
 end

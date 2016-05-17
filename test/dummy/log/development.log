@@ -1,146 +1,94 @@
-  [1m[36m (32.1ms)[0m  [1mCREATE TABLE "schema_migrations" ("version" character varying NOT NULL) [0m
-  [1m[35m (10.0ms)[0m  CREATE UNIQUE INDEX  "unique_schema_migrations" ON "schema_migrations"  ("version")
-  [1m[36mActiveRecord::SchemaMigration Load (0.4ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
-Migrating to CreateFirstRuns (20160506094209)
-  [1m[35m (0.3ms)[0m  BEGIN
-DEPRECATION WARNING: `#timestamps` was called without specifying an option for `null`. In Rails 5, this behavior will change to `null: false`. You should manually specify `null: true` to prevent the behavior of your existing migrations from changing. (called from block in change at /mnt/hdd1/ced/ruby/feodalis/test/dummy/db/migrate/20160506094209_create_first_runs.rb:5)
-  [1m[36m (16.5ms)[0m  [1mCREATE TABLE "g_game_board_players" ("id" serial primary key, "created_at" timestamp, "updated_at" timestamp) [0m
-DEPRECATION WARNING: `#timestamps` was called without specifying an option for `null`. In Rails 5, this behavior will change to `null: false`. You should manually specify `null: true` to prevent the behavior of your existing migrations from changing. (called from block in change at /mnt/hdd1/ced/ruby/feodalis/test/dummy/db/migrate/20160506094209_create_first_runs.rb:11)
-  [1m[35m (15.7ms)[0m  CREATE TABLE "h_houses" ("id" serial primary key, "code_name" character varying NOT NULL, "h_suzerain_house_id" integer, "created_at" timestamp, "updated_at" timestamp) 
-  [1m[36m (7.7ms)[0m  [1mCREATE  INDEX  "index_h_houses_on_h_suzerain_house_id" ON "h_houses"  ("h_suzerain_house_id")[0m
-  [1m[35m (9.0ms)[0m  CREATE UNIQUE INDEX  "index_h_houses_on_code_name" ON "h_houses"  ("code_name")
-  [1m[36m (8.0ms)[0m  [1mALTER TABLE "h_houses" ADD CONSTRAINT "fk_rails_eb37fc6223"
-FOREIGN KEY ("h_suzerain_house_id")
-  REFERENCES "h_houses" ("id")
+  [1m[36m (3.5ms)[0m  [1mCREATE TABLE "schema_migrations" ("version" varchar NOT NULL) [0m
+  [1m[35m (0.1ms)[0m  select sqlite_version(*)
+  [1m[36m (1.7ms)[0m  [1mCREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")[0m
+  [1m[35mActiveRecord::SchemaMigration Load (0.1ms)[0m  SELECT "schema_migrations".* FROM "schema_migrations"
+Migrating to RootModels (20160506094209)
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+Migrating to RootModels (20160506094209)
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+Migrating to RootModels (20160506094209)
+  [1m[35m (0.1ms)[0m  begin transaction
+DEPRECATION WARNING: `#timestamps` was called without specifying an option for `null`. In Rails 5, this behavior will change to `null: false`. You should manually specify `null: true` to prevent the behavior of your existing migrations from changing. (called from block in change at /mnt/hdd1/ced/ruby/feodalis/db/migrate/20160506094209_root_models.rb:5)
+  [1m[36m (0.4ms)[0m  [1mCREATE TABLE "g_game_board_players" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "created_at" datetime, "updated_at" datetime) [0m
+DEPRECATION WARNING: `#timestamps` was called without specifying an option for `null`. In Rails 5, this behavior will change to `null: false`. You should manually specify `null: true` to prevent the behavior of your existing migrations from changing. (called from block in change at /mnt/hdd1/ced/ruby/feodalis/db/migrate/20160506094209_root_models.rb:11)
+  [1m[35m (0.1ms)[0m  CREATE TABLE "h_houses" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "code_name" varchar NOT NULL, "h_suzerain_house_id" integer, "created_at" datetime, "updated_at" datetime) 
+  [1m[36m (0.0ms)[0m  [1mselect sqlite_version(*)[0m
+  [1m[35m (0.1ms)[0m  CREATE  INDEX "index_h_houses_on_h_suzerain_house_id" ON "h_houses" ("h_suzerain_house_id")
+  [1m[36m (0.1ms)[0m  [1m            SELECT sql
+            FROM sqlite_master
+            WHERE name='index_h_houses_on_h_suzerain_house_id' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='index_h_houses_on_h_suzerain_house_id' AND type='index'
 [0m
-DEPRECATION WARNING: `#timestamps` was called without specifying an option for `null`. In Rails 5, this behavior will change to `null: false`. You should manually specify `null: true` to prevent the behavior of your existing migrations from changing. (called from block in change at /mnt/hdd1/ced/ruby/feodalis/test/dummy/db/migrate/20160506094209_create_first_runs.rb:20)
-  [1m[35m (8.9ms)[0m  CREATE TABLE "al_alliances" ("id" serial primary key, "g_game_board_player_id" integer NOT NULL, "h_house_id" integer NOT NULL, "h_peer_house_id" integer NOT NULL, "created_at" timestamp, "updated_at" timestamp) 
-  [1m[36m (1.2ms)[0m  [1mALTER TABLE "al_alliances" ADD CONSTRAINT "fk_rails_401b3974ec"
-FOREIGN KEY ("g_game_board_player_id")
-  REFERENCES "g_game_board_players" ("id")
+  [1m[35m (0.6ms)[0m  CREATE UNIQUE INDEX "index_h_houses_on_code_name" ON "h_houses" ("code_name")
+DEPRECATION WARNING: `#timestamps` was called without specifying an option for `null`. In Rails 5, this behavior will change to `null: false`. You should manually specify `null: true` to prevent the behavior of your existing migrations from changing. (called from block in change at /mnt/hdd1/ced/ruby/feodalis/db/migrate/20160506094209_root_models.rb:21)
+  [1m[36m (0.1ms)[0m  [1mCREATE TABLE "al_relationships" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "g_game_board_player_id" integer NOT NULL, "h_house_id" integer NOT NULL, "h_peer_house_id" integer NOT NULL, "type" varchar NOT NULL, "created_at" datetime, "updated_at" datetime) [0m
+  [1m[35m (0.1ms)[0m  CREATE  INDEX "index_al_relationships_on_type" ON "al_relationships" ("type")
+  [1m[36m (0.1ms)[0m  [1m            SELECT sql
+            FROM sqlite_master
+            WHERE name='index_al_relationships_on_type' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='index_al_relationships_on_type' AND type='index'
 [0m
-  [1m[35m (0.9ms)[0m  ALTER TABLE "al_alliances" ADD CONSTRAINT "fk_rails_701c4b36a5"
-FOREIGN KEY ("h_house_id")
-  REFERENCES "h_houses" ("id")
+  [1m[35m (0.1ms)[0m  CREATE UNIQUE INDEX "al_relationships_unique_index" ON "al_relationships" ("g_game_board_player_id", "h_house_id", "h_peer_house_id")
+DEPRECATION WARNING: `#timestamps` was called without specifying an option for `null`. In Rails 5, this behavior will change to `null: false`. You should manually specify `null: true` to prevent the behavior of your existing migrations from changing. (called from block in change at /mnt/hdd1/ced/ruby/feodalis/db/migrate/20160506094209_root_models.rb:31)
+  [1m[36m (0.1ms)[0m  [1mCREATE TABLE "al_houses" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "g_game_board_player_id" integer NOT NULL, "h_house_id" integer NOT NULL, "minor_alliance_member" boolean DEFAULT 'f', "last_bet" integer NOT NULL, "created_at" datetime, "updated_at" datetime) [0m
+  [1m[35m (0.1ms)[0m  CREATE UNIQUE INDEX "al_houses_unique_index" ON "al_houses" ("g_game_board_player_id", "h_house_id")
+DEPRECATION WARNING: `#timestamps` was called without specifying an option for `null`. In Rails 5, this behavior will change to `null: false`. You should manually specify `null: true` to prevent the behavior of your existing migrations from changing. (called from block in change at /mnt/hdd1/ced/ruby/feodalis/db/migrate/20160506094209_root_models.rb:40)
+  [1m[36m (0.1ms)[0m  [1mCREATE TABLE "al_bets" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "g_game_board_player_id" integer NOT NULL, "h_house_id" integer NOT NULL, "h_target_house_id" integer NOT NULL, "bet" integer DEFAULT 0 NOT NULL, "created_at" datetime, "updated_at" datetime) [0m
+  [1m[35m (0.1ms)[0m  CREATE UNIQUE INDEX "al_bets_unique_index" ON "al_bets" ("g_game_board_player_id", "h_house_id", "h_target_house_id")
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20160506094209"]]
+  [1m[35m (3.4ms)[0m  commit transaction
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.2ms)[0m              SELECT sql
+            FROM sqlite_master
+            WHERE name='al_bets_unique_index' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='al_bets_unique_index' AND type='index'
 
-  [1m[36m (10.0ms)[0m  [1mCREATE UNIQUE INDEX  "al_alliances_unique_index" ON "al_alliances"  ("g_game_board_player_id", "h_house_id", "h_peer_house_id")[0m
-  [1m[35m (1.7ms)[0m  ALTER TABLE "al_alliances" ADD CONSTRAINT "fk_rails_6b9ef823ee"
-FOREIGN KEY ("h_peer_house_id")
-  REFERENCES "h_houses" ("id")
-
-DEPRECATION WARNING: `#timestamps` was called without specifying an option for `null`. In Rails 5, this behavior will change to `null: false`. You should manually specify `null: true` to prevent the behavior of your existing migrations from changing. (called from block in change at /mnt/hdd1/ced/ruby/feodalis/test/dummy/db/migrate/20160506094209_create_first_runs.rb:30)
-  [1m[36m (7.3ms)[0m  [1mCREATE TABLE "al_houses" ("id" serial primary key, "g_game_board_player_id" integer NOT NULL, "h_house_id" integer NOT NULL, "minor_alliance_member" boolean DEFAULT 'f', "last_bet" integer NOT NULL, "created_at" timestamp, "updated_at" timestamp) [0m
-  [1m[35m (1.2ms)[0m  ALTER TABLE "al_houses" ADD CONSTRAINT "fk_rails_843caf5bb4"
-FOREIGN KEY ("g_game_board_player_id")
-  REFERENCES "g_game_board_players" ("id")
-
-  [1m[36m (2.0ms)[0m  [1mALTER TABLE "al_houses" ADD CONSTRAINT "fk_rails_c4cf38e086"
-FOREIGN KEY ("h_house_id")
-  REFERENCES "h_houses" ("id")
+  [1m[36m (0.1ms)[0m  [1m            SELECT sql
+            FROM sqlite_master
+            WHERE name='al_houses_unique_index' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='al_houses_unique_index' AND type='index'
 [0m
-  [1m[35m (3.0ms)[0m  CREATE UNIQUE INDEX  "al_houses_unique_index" ON "al_houses"  ("g_game_board_player_id", "h_house_id")
-DEPRECATION WARNING: `#timestamps` was called without specifying an option for `null`. In Rails 5, this behavior will change to `null: false`. You should manually specify `null: true` to prevent the behavior of your existing migrations from changing. (called from block in change at /mnt/hdd1/ced/ruby/feodalis/test/dummy/db/migrate/20160506094209_create_first_runs.rb:39)
-  [1m[36m (14.4ms)[0m  [1mCREATE TABLE "al_bets" ("id" serial primary key, "g_game_board_player_id" integer NOT NULL, "h_house_id" integer NOT NULL, "h_target_house_id" integer NOT NULL, "bet" integer DEFAULT 0 NOT NULL, "created_at" timestamp, "updated_at" timestamp) [0m
-  [1m[35m (0.8ms)[0m  ALTER TABLE "al_bets" ADD CONSTRAINT "fk_rails_ee0524f0f7"
-FOREIGN KEY ("g_game_board_player_id")
-  REFERENCES "g_game_board_players" ("id")
+  [1m[35m (0.1ms)[0m              SELECT sql
+            FROM sqlite_master
+            WHERE name='al_relationships_unique_index' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='al_relationships_unique_index' AND type='index'
 
-  [1m[36m (0.7ms)[0m  [1mALTER TABLE "al_bets" ADD CONSTRAINT "fk_rails_53a09abf3d"
-FOREIGN KEY ("h_house_id")
-  REFERENCES "h_houses" ("id")
+  [1m[36m (0.1ms)[0m  [1m            SELECT sql
+            FROM sqlite_master
+            WHERE name='index_al_relationships_on_type' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='index_al_relationships_on_type' AND type='index'
 [0m
-  [1m[35m (7.8ms)[0m  CREATE UNIQUE INDEX  "al_bets_unique_index" ON "al_bets"  ("g_game_board_player_id", "h_house_id", "h_target_house_id")
-  [1m[36m (0.9ms)[0m  [1mALTER TABLE "al_bets" ADD CONSTRAINT "fk_rails_1bd9521acc"
-FOREIGN KEY ("h_target_house_id")
-  REFERENCES "h_houses" ("id")
-[0m
-DEPRECATION WARNING: `#timestamps` was called without specifying an option for `null`. In Rails 5, this behavior will change to `null: false`. You should manually specify `null: true` to prevent the behavior of your existing migrations from changing. (called from block in change at /mnt/hdd1/ced/ruby/feodalis/test/dummy/db/migrate/20160506094209_create_first_runs.rb:48)
-  [1m[35m (12.9ms)[0m  CREATE TABLE "al_enemies" ("id" serial primary key, "g_game_board_player_id" integer NOT NULL, "h_house_id" integer NOT NULL, "h_enemy_house_id" integer NOT NULL, "created_at" timestamp, "updated_at" timestamp) 
-  [1m[36m (0.9ms)[0m  [1mALTER TABLE "al_enemies" ADD CONSTRAINT "fk_rails_577c159233"
-FOREIGN KEY ("g_game_board_player_id")
-  REFERENCES "g_game_board_players" ("id")
-[0m
-  [1m[35m (0.9ms)[0m  ALTER TABLE "al_enemies" ADD CONSTRAINT "fk_rails_f158e7875a"
-FOREIGN KEY ("h_house_id")
-  REFERENCES "h_houses" ("id")
+  [1m[35m (0.1ms)[0m              SELECT sql
+            FROM sqlite_master
+            WHERE name='index_h_houses_on_code_name' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='index_h_houses_on_code_name' AND type='index'
 
-  [1m[36m (9.0ms)[0m  [1mCREATE UNIQUE INDEX  "al_enemies_unique_index" ON "al_enemies"  ("h_house_id", "h_enemy_house_id")[0m
-  [1m[35m (1.0ms)[0m  ALTER TABLE "al_enemies" ADD CONSTRAINT "fk_rails_f171dd7c43"
-FOREIGN KEY ("h_enemy_house_id")
-  REFERENCES "h_houses" ("id")
-
-  [1m[36mSQL (2.3ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES ($1)[0m  [["version", "20160506094209"]]
-  [1m[35m (9.9ms)[0m  COMMIT
-  [1m[36mActiveRecord::SchemaMigration Load (0.3ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
-  [1m[35m (2.8ms)[0m  SELECT t2.oid::regclass::text AS to_table, a1.attname AS column, a2.attname AS primary_key, c.conname AS name, c.confupdtype AS on_update, c.confdeltype AS on_delete
-FROM pg_constraint c
-JOIN pg_class t1 ON c.conrelid = t1.oid
-JOIN pg_class t2 ON c.confrelid = t2.oid
-JOIN pg_attribute a1 ON a1.attnum = c.conkey[1] AND a1.attrelid = t1.oid
-JOIN pg_attribute a2 ON a2.attnum = c.confkey[1] AND a2.attrelid = t2.oid
-JOIN pg_namespace t3 ON c.connamespace = t3.oid
-WHERE c.contype = 'f'
-  AND t1.relname = 'al_alliances'
-  AND t3.nspname = ANY (current_schemas(false))
-ORDER BY c.conname
-
-  [1m[36m (2.0ms)[0m  [1mSELECT t2.oid::regclass::text AS to_table, a1.attname AS column, a2.attname AS primary_key, c.conname AS name, c.confupdtype AS on_update, c.confdeltype AS on_delete
-FROM pg_constraint c
-JOIN pg_class t1 ON c.conrelid = t1.oid
-JOIN pg_class t2 ON c.confrelid = t2.oid
-JOIN pg_attribute a1 ON a1.attnum = c.conkey[1] AND a1.attrelid = t1.oid
-JOIN pg_attribute a2 ON a2.attnum = c.confkey[1] AND a2.attrelid = t2.oid
-JOIN pg_namespace t3 ON c.connamespace = t3.oid
-WHERE c.contype = 'f'
-  AND t1.relname = 'al_bets'
-  AND t3.nspname = ANY (current_schemas(false))
-ORDER BY c.conname
-[0m
-  [1m[35m (2.1ms)[0m  SELECT t2.oid::regclass::text AS to_table, a1.attname AS column, a2.attname AS primary_key, c.conname AS name, c.confupdtype AS on_update, c.confdeltype AS on_delete
-FROM pg_constraint c
-JOIN pg_class t1 ON c.conrelid = t1.oid
-JOIN pg_class t2 ON c.confrelid = t2.oid
-JOIN pg_attribute a1 ON a1.attnum = c.conkey[1] AND a1.attrelid = t1.oid
-JOIN pg_attribute a2 ON a2.attnum = c.confkey[1] AND a2.attrelid = t2.oid
-JOIN pg_namespace t3 ON c.connamespace = t3.oid
-WHERE c.contype = 'f'
-  AND t1.relname = 'al_enemies'
-  AND t3.nspname = ANY (current_schemas(false))
-ORDER BY c.conname
-
-  [1m[36m (2.1ms)[0m  [1mSELECT t2.oid::regclass::text AS to_table, a1.attname AS column, a2.attname AS primary_key, c.conname AS name, c.confupdtype AS on_update, c.confdeltype AS on_delete
-FROM pg_constraint c
-JOIN pg_class t1 ON c.conrelid = t1.oid
-JOIN pg_class t2 ON c.confrelid = t2.oid
-JOIN pg_attribute a1 ON a1.attnum = c.conkey[1] AND a1.attrelid = t1.oid
-JOIN pg_attribute a2 ON a2.attnum = c.confkey[1] AND a2.attrelid = t2.oid
-JOIN pg_namespace t3 ON c.connamespace = t3.oid
-WHERE c.contype = 'f'
-  AND t1.relname = 'al_houses'
-  AND t3.nspname = ANY (current_schemas(false))
-ORDER BY c.conname
-[0m
-  [1m[35m (2.0ms)[0m  SELECT t2.oid::regclass::text AS to_table, a1.attname AS column, a2.attname AS primary_key, c.conname AS name, c.confupdtype AS on_update, c.confdeltype AS on_delete
-FROM pg_constraint c
-JOIN pg_class t1 ON c.conrelid = t1.oid
-JOIN pg_class t2 ON c.confrelid = t2.oid
-JOIN pg_attribute a1 ON a1.attnum = c.conkey[1] AND a1.attrelid = t1.oid
-JOIN pg_attribute a2 ON a2.attnum = c.confkey[1] AND a2.attrelid = t2.oid
-JOIN pg_namespace t3 ON c.connamespace = t3.oid
-WHERE c.contype = 'f'
-  AND t1.relname = 'g_game_board_players'
-  AND t3.nspname = ANY (current_schemas(false))
-ORDER BY c.conname
-
-  [1m[36m (2.0ms)[0m  [1mSELECT t2.oid::regclass::text AS to_table, a1.attname AS column, a2.attname AS primary_key, c.conname AS name, c.confupdtype AS on_update, c.confdeltype AS on_delete
-FROM pg_constraint c
-JOIN pg_class t1 ON c.conrelid = t1.oid
-JOIN pg_class t2 ON c.confrelid = t2.oid
-JOIN pg_attribute a1 ON a1.attnum = c.conkey[1] AND a1.attrelid = t1.oid
-JOIN pg_attribute a2 ON a2.attnum = c.confkey[1] AND a2.attrelid = t2.oid
-JOIN pg_namespace t3 ON c.connamespace = t3.oid
-WHERE c.contype = 'f'
-  AND t1.relname = 'h_houses'
-  AND t3.nspname = ANY (current_schemas(false))
-ORDER BY c.conname
+  [1m[36m (0.1ms)[0m  [1m            SELECT sql
+            FROM sqlite_master
+            WHERE name='index_h_houses_on_h_suzerain_house_id' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='index_h_houses_on_h_suzerain_house_id' AND type='index'
 [0m

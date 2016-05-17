@@ -8,6 +8,7 @@ This dev is designed to be included in a bigger project. It's an old project abo
 ## Usage
 
 ```ruby
+
 # Create a game board player
 @gbp = GGameBoardPlayer.create!
     
@@ -34,3 +35,5 @@ HHouse.create_house_and_vassals( :stark, :karstark )
 
 # Retrieve a hash containing all ennemies, allies or neutrals for a house
 @gbp.alliances_hash( @stark )
+
+̀̀̀ ``

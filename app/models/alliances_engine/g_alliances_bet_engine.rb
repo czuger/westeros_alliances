@@ -1,4 +1,4 @@
-module GAlliancesBetEngine
+module AlliancesEngine::GAlliancesBetEngine
 
   include Assert
 

@@ -1,4 +1,4 @@
-class AllModels < ActiveRecord::Migration
+class RootModels < ActiveRecord::Migration
   def change
 
     create_table :g_game_board_players do |table|
