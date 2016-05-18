@@ -10,16 +10,16 @@
 
 class GGameBoardPlayer < ActiveRecord::Base
 
-  has_many :al_alliances, dependent: :destroy
-  has_many :al_enemies, dependent: :destroy
-  has_many :al_houses, dependent: :destroy
-  has_many :al_bets, dependent: :destroy
+  has_many :al_alliances, dependent: :destroy, class_name: 'WesterosAlliances::AlAlliance'
+  has_many :al_enemies, dependent: :destroy, class_name: 'WesterosAlliances::AlEnemy'
+  has_many :al_houses, dependent: :destroy, class_name: 'WesterosAlliances::AlHouse'
+  has_many :al_bets, dependent: :destroy, class_name: 'WesterosAlliances::AlBet'
 
   belongs_to :g_game_board
 
-  include AlliancesEngine::GAlliancesBetEngine
-  include AlliancesEngine::GAllianceCoreEngine
-  include AlliancesEngine::GEnemiesCoreEngine
+  include WesterosAlliances::AlliancesEngine::GAlliancesBetEngine
+  include WesterosAlliances::AlliancesEngine::GAllianceCoreEngine
+  include WesterosAlliances::AlliancesEngine::GEnemiesCoreEngine
 
   # give all allies, enemies or neutral houses for a house
   def alliances_hash( house )

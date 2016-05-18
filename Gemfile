@@ -13,6 +13,6 @@ gemspec
 # To use a debugger
 # gem 'byebug', group: [:development, :test]
 
-gem 'factory_girl_rails'
+# gem 'factory_girl_rails'
 
 gem 'rename', group: [ :development ]

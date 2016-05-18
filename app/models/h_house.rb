@@ -1,5 +1,4 @@
 require 'active_record'
-require_relative 'al_alliance'
 
 # This class store a house, this is the base definition of a house and is game board independent
 class HHouse < ActiveRecord::Base
@@ -7,8 +6,8 @@ class HHouse < ActiveRecord::Base
   has_many :vassals, class_name: HHouse, foreign_key: :h_suzerain_house_id
 
   # Caution : this is for all board / game_board_player
-  has_many :al_enemies
-  has_many :al_alliances
+  has_many :al_enemies, class_name: 'WesterosAlliances::AlEnemy'
+  has_many :al_alliances, class_name: 'WesterosAlliances::AlAlliance'
 
   def self.create_house_and_vassals( *code_names )
     houses = []

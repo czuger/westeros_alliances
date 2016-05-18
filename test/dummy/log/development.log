@@ -92,3 +92,148 @@ DEPRECATION WARNING: `#timestamps` was called without specifying an option for `
             FROM sqlite_temp_master
             WHERE name='index_h_houses_on_h_suzerain_house_id' AND type='index'
 [0m
+  [1m[36m (2.6ms)[0m  [1mCREATE TABLE "schema_migrations" ("version" varchar NOT NULL) [0m
+  [1m[35m (0.1ms)[0m  select sqlite_version(*)
+  [1m[36m (1.7ms)[0m  [1mCREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")[0m
+  [1m[35mActiveRecord::SchemaMigration Load (0.1ms)[0m  SELECT "schema_migrations".* FROM "schema_migrations"
+Migrating to RootModels (20160506094209)
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+DEPRECATION WARNING: `#timestamps` was called without specifying an option for `null`. In Rails 5, this behavior will change to `null: false`. You should manually specify `null: true` to prevent the behavior of your existing migrations from changing. (called from block in change at /mnt/hdd1/ced/ruby/westeros_alliances/db/migrate/20160506094209_root_models.rb:5)
+  [1m[35m (0.3ms)[0m  CREATE TABLE "g_game_board_players" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "created_at" datetime, "updated_at" datetime) 
+DEPRECATION WARNING: `#timestamps` was called without specifying an option for `null`. In Rails 5, this behavior will change to `null: false`. You should manually specify `null: true` to prevent the behavior of your existing migrations from changing. (called from block in change at /mnt/hdd1/ced/ruby/westeros_alliances/db/migrate/20160506094209_root_models.rb:11)
+  [1m[36m (0.1ms)[0m  [1mCREATE TABLE "h_houses" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "code_name" varchar NOT NULL, "h_suzerain_house_id" integer, "created_at" datetime, "updated_at" datetime) [0m
+  [1m[35m (0.1ms)[0m  CREATE  INDEX "index_h_houses_on_h_suzerain_house_id" ON "h_houses" ("h_suzerain_house_id")
+  [1m[36m (0.1ms)[0m  [1m            SELECT sql
+            FROM sqlite_master
+            WHERE name='index_h_houses_on_h_suzerain_house_id' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='index_h_houses_on_h_suzerain_house_id' AND type='index'
+[0m
+  [1m[35m (0.2ms)[0m  CREATE UNIQUE INDEX "index_h_houses_on_code_name" ON "h_houses" ("code_name")
+DEPRECATION WARNING: `#timestamps` was called without specifying an option for `null`. In Rails 5, this behavior will change to `null: false`. You should manually specify `null: true` to prevent the behavior of your existing migrations from changing. (called from block in change at /mnt/hdd1/ced/ruby/westeros_alliances/db/migrate/20160506094209_root_models.rb:21)
+  [1m[36m (0.1ms)[0m  [1mCREATE TABLE "westeros_alliances_al_relationships" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "g_game_board_player_id" integer NOT NULL, "h_house_id" integer NOT NULL, "h_peer_house_id" integer NOT NULL, "type" varchar NOT NULL, "created_at" datetime, "updated_at" datetime) [0m
+  [1m[35m (0.1ms)[0m  CREATE  INDEX "index_westeros_alliances_al_relationships_on_type" ON "westeros_alliances_al_relationships" ("type")
+  [1m[36m (0.1ms)[0m  [1m            SELECT sql
+            FROM sqlite_master
+            WHERE name='index_westeros_alliances_al_relationships_on_type' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='index_westeros_alliances_al_relationships_on_type' AND type='index'
+[0m
+  [1m[35m (0.1ms)[0m  CREATE UNIQUE INDEX "al_relationships_unique_index" ON "westeros_alliances_al_relationships" ("g_game_board_player_id", "h_house_id", "h_peer_house_id")
+DEPRECATION WARNING: `#timestamps` was called without specifying an option for `null`. In Rails 5, this behavior will change to `null: false`. You should manually specify `null: true` to prevent the behavior of your existing migrations from changing. (called from block in change at /mnt/hdd1/ced/ruby/westeros_alliances/db/migrate/20160506094209_root_models.rb:31)
+  [1m[36m (0.2ms)[0m  [1mCREATE TABLE "westeros_alliances_al_houses" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "g_game_board_player_id" integer NOT NULL, "h_house_id" integer NOT NULL, "minor_alliance_member" boolean DEFAULT 'f', "last_bet" integer NOT NULL, "created_at" datetime, "updated_at" datetime) [0m
+  [1m[35m (0.1ms)[0m  CREATE UNIQUE INDEX "al_houses_unique_index" ON "westeros_alliances_al_houses" ("g_game_board_player_id", "h_house_id")
+DEPRECATION WARNING: `#timestamps` was called without specifying an option for `null`. In Rails 5, this behavior will change to `null: false`. You should manually specify `null: true` to prevent the behavior of your existing migrations from changing. (called from block in change at /mnt/hdd1/ced/ruby/westeros_alliances/db/migrate/20160506094209_root_models.rb:40)
+  [1m[36m (0.1ms)[0m  [1mCREATE TABLE "westeros_alliances_al_bets" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "g_game_board_player_id" integer NOT NULL, "h_house_id" integer NOT NULL, "h_target_house_id" integer NOT NULL, "bet" integer DEFAULT 0 NOT NULL, "created_at" datetime, "updated_at" datetime) [0m
+  [1m[35m (0.1ms)[0m  CREATE UNIQUE INDEX "al_bets_unique_index" ON "westeros_alliances_al_bets" ("g_game_board_player_id", "h_house_id", "h_target_house_id")
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20160506094209"]]
+  [1m[35m (2.7ms)[0m  commit transaction
+Migrating to CreateGGameBoards (20160514093654)
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+  [1m[35m (0.3ms)[0m  CREATE TABLE "g_game_boards" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "turn" integer, "created_at" datetime NOT NULL, "updated_at" datetime NOT NULL) 
+  [1m[36m (0.2ms)[0m  [1mALTER TABLE "g_game_board_players" ADD "g_game_board_id" integer[0m
+  [1m[35mSQL (0.1ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES (?)  [["version", "20160514093654"]]
+  [1m[36m (2.0ms)[0m  [1mcommit transaction[0m
+  [1m[35mActiveRecord::SchemaMigration Load (0.1ms)[0m  SELECT "schema_migrations".* FROM "schema_migrations"
+  [1m[36m (0.1ms)[0m  [1m            SELECT sql
+            FROM sqlite_master
+            WHERE name='index_h_houses_on_code_name' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='index_h_houses_on_code_name' AND type='index'
+[0m
+  [1m[35m (0.1ms)[0m              SELECT sql
+            FROM sqlite_master
+            WHERE name='index_h_houses_on_h_suzerain_house_id' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='index_h_houses_on_h_suzerain_house_id' AND type='index'
+
+  [1m[36m (0.1ms)[0m  [1m            SELECT sql
+            FROM sqlite_master
+            WHERE name='al_bets_unique_index' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='al_bets_unique_index' AND type='index'
+[0m
+  [1m[35m (0.1ms)[0m              SELECT sql
+            FROM sqlite_master
+            WHERE name='al_houses_unique_index' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='al_houses_unique_index' AND type='index'
+
+  [1m[36m (0.1ms)[0m  [1m            SELECT sql
+            FROM sqlite_master
+            WHERE name='al_relationships_unique_index' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='al_relationships_unique_index' AND type='index'
+[0m
+  [1m[35m (0.1ms)[0m              SELECT sql
+            FROM sqlite_master
+            WHERE name='index_westeros_alliances_al_relationships_on_type' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='index_westeros_alliances_al_relationships_on_type' AND type='index'
+
+  [1m[36mActiveRecord::SchemaMigration Load (0.2ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35mActiveRecord::SchemaMigration Load (0.1ms)[0m  SELECT "schema_migrations".* FROM "schema_migrations"
+  [1m[36m (0.1ms)[0m  [1m            SELECT sql
+            FROM sqlite_master
+            WHERE name='index_h_houses_on_code_name' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='index_h_houses_on_code_name' AND type='index'
+[0m
+  [1m[35m (0.1ms)[0m              SELECT sql
+            FROM sqlite_master
+            WHERE name='index_h_houses_on_h_suzerain_house_id' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='index_h_houses_on_h_suzerain_house_id' AND type='index'
+
+  [1m[36m (0.1ms)[0m  [1m            SELECT sql
+            FROM sqlite_master
+            WHERE name='al_bets_unique_index' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='al_bets_unique_index' AND type='index'
+[0m
+  [1m[35m (0.1ms)[0m              SELECT sql
+            FROM sqlite_master
+            WHERE name='al_houses_unique_index' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='al_houses_unique_index' AND type='index'
+
+  [1m[36m (0.1ms)[0m  [1m            SELECT sql
+            FROM sqlite_master
+            WHERE name='al_relationships_unique_index' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='al_relationships_unique_index' AND type='index'
+[0m
+  [1m[35m (0.1ms)[0m              SELECT sql
+            FROM sqlite_master
+            WHERE name='index_westeros_alliances_al_relationships_on_type' AND type='index'
+            UNION ALL
+            SELECT sql
+            FROM sqlite_temp_master
+            WHERE name='index_westeros_alliances_al_relationships_on_type' AND type='index'
+

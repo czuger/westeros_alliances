@@ -11,55 +11,78 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160506094209) do
-
-  create_table "al_bets", force: :cascade do |t|
-    t.integer  "g_game_board_player_id",             null: false
-    t.integer  "h_house_id",                         null: false
-    t.integer  "h_target_house_id",                  null: false
-    t.integer  "bet",                    default: 0, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "al_bets", ["g_game_board_player_id", "h_house_id", "h_target_house_id"], name: "al_bets_unique_index", unique: true
-
-  create_table "al_houses", force: :cascade do |t|
-    t.integer  "g_game_board_player_id",                 null: false
-    t.integer  "h_house_id",                             null: false
-    t.boolean  "minor_alliance_member",  default: false
-    t.integer  "last_bet",                               null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "al_houses", ["g_game_board_player_id", "h_house_id"], name: "al_houses_unique_index", unique: true
-
-  create_table "al_relationships", force: :cascade do |t|
-    t.integer  "g_game_board_player_id", null: false
-    t.integer  "h_house_id",             null: false
-    t.integer  "h_peer_house_id",        null: false
-    t.string   "type",                   null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "al_relationships", ["g_game_board_player_id", "h_house_id", "h_peer_house_id"], name: "al_relationships_unique_index", unique: true
-  add_index "al_relationships", ["type"], name: "index_al_relationships_on_type"
+ActiveRecord::Schema.define(version: 20160518094932) do
 
   create_table "g_game_board_players", force: :cascade do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.integer  "g_game_board_id", null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "g_game_board_players", ["g_game_board_id"], name: "index_g_game_board_players_on_g_game_board_id"
+
+  create_table "g_game_boards", force: :cascade do |t|
+    t.integer  "turn"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "h_houses", force: :cascade do |t|
     t.string   "code_name",           null: false
     t.integer  "h_suzerain_house_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
   end
 
   add_index "h_houses", ["code_name"], name: "index_h_houses_on_code_name", unique: true
   add_index "h_houses", ["h_suzerain_house_id"], name: "index_h_houses_on_h_suzerain_house_id"
+
+  create_table "westeros_alliances_al_bets", force: :cascade do |t|
+    t.integer  "g_game_board_player_id",             null: false
+    t.integer  "h_house_id",                         null: false
+    t.integer  "h_target_house_id",                  null: false
+    t.integer  "bet",                    default: 0, null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+  end
+
+  add_index "westeros_alliances_al_bets", ["g_game_board_player_id", "h_house_id", "h_target_house_id"], name: "al_bets_unique_index", unique: true
+
+  create_table "westeros_alliances_al_houses", force: :cascade do |t|
+    t.integer  "g_game_board_player_id",                 null: false
+    t.integer  "h_house_id",                             null: false
+    t.boolean  "minor_alliance_member",  default: false
+    t.integer  "last_bet",                               null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
+  end
+
+  add_index "westeros_alliances_al_houses", ["g_game_board_player_id", "h_house_id"], name: "al_houses_unique_index", unique: true
+
+  create_table "westeros_alliances_al_logs", force: :cascade do |t|
+    t.integer  "g_game_board_id",   null: false
+    t.integer  "h_house_id",        null: false
+    t.integer  "h_target_house_id", null: false
+    t.integer  "log_code",          null: false
+    t.string   "alliance_details",  null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
+
+  add_index "westeros_alliances_al_logs", ["g_game_board_id"], name: "index_westeros_alliances_al_logs_on_g_game_board_id"
+  add_index "westeros_alliances_al_logs", ["h_house_id"], name: "index_westeros_alliances_al_logs_on_h_house_id"
+  add_index "westeros_alliances_al_logs", ["h_target_house_id"], name: "index_westeros_alliances_al_logs_on_h_target_house_id"
+
+  create_table "westeros_alliances_al_relationships", force: :cascade do |t|
+    t.integer  "g_game_board_player_id", null: false
+    t.integer  "h_house_id",             null: false
+    t.integer  "h_peer_house_id",        null: false
+    t.string   "type",                   null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  add_index "westeros_alliances_al_relationships", ["g_game_board_player_id", "h_house_id", "h_peer_house_id"], name: "al_relationships_unique_index", unique: true
+  add_index "westeros_alliances_al_relationships", ["type"], name: "index_westeros_alliances_al_relationships_on_type"
 
 end

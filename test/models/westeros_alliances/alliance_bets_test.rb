@@ -5,8 +5,10 @@ require 'pp'
 class AllianceBetsTest < ActiveSupport::TestCase
 
   def setup
-    GGameBoardPlayer.destroy_all
-    @gbp = GGameBoardPlayer.create!
+    GGameBoard.destroy_all
+
+    @gb = GGameBoard.create!
+    @gbp = GGameBoardPlayer.create!( g_game_board: @gb )
 
     @stark, @karstark = HHouse.create_house_and_vassals( :stark, :karstark )
     @lannister, @cendermark = HHouse.create_house_and_vassals( :lannister, :cendermark )

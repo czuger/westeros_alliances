@@ -1,4 +1,4 @@
-require "feodalis/engine"
+require "westeros_alliances/engine"
 
 module WesterosAlliances
 end

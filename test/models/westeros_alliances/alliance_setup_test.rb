@@ -5,8 +5,11 @@ require 'pp'
 class AllianceSetupTest < ActiveSupport::TestCase
 
   def setup
-    GGameBoardPlayer.destroy_all
-    @gbp = GGameBoardPlayer.create!
+
+    GGameBoard.destroy_all
+
+    @gb = GGameBoard.create!
+    @gbp = GGameBoardPlayer.create!( g_game_board: @gb )
 
     @stark, @karstark = HHouse.create_house_and_vassals( :stark, :karstark )
     @lannister, @cendermark = HHouse.create_house_and_vassals( :lannister, :cendermark )
@@ -31,7 +34,7 @@ class AllianceSetupTest < ActiveSupport::TestCase
 
   def test_allies_list
     @gbp.create_alliance( @stark, @greyjoy, 1 )
-    @gbp2 = GGameBoardPlayer.create!
+    @gbp2 = GGameBoardPlayer.create!( g_game_board: @gb )
     @gbp2.set_enemies( @stark, @lannister )
     @gbp2.create_alliance( @stark, @greyjoy, 1 )
     assert_includes( @gbp.allies( @stark ).pluck( :id ), @greyjoy.id )
@@ -46,7 +49,7 @@ class AllianceSetupTest < ActiveSupport::TestCase
   def test_alliance_separation_through_game_board
     @gbp.create_alliance( @stark, @lannister, 0 )
     assert @gbp.allied?( @cendermark, @stark )
-    @gbp2 = GGameBoardPlayer.create!
+    @gbp2 = GGameBoardPlayer.create!( g_game_board: @gb )
     refute @gbp2.allied?( @cendermark, @stark )
   end
 
@@ -91,6 +94,9 @@ class AllianceSetupTest < ActiveSupport::TestCase
       @gbp.create_alliance( @cendermark, @stark, 0 )
     }
     @gbp.create_alliance( @stark, @lannister, 0 )
+
+    # pp WesterosAlliances::AlLog.all
+
     assert @gbp.allied?( @stark, @cendermark )
     assert @gbp.allied?( @cendermark, @stark )
     assert @gbp.allied?( @karstark, @cendermark )

@@ -9,11 +9,11 @@ default: &default
   timeout: 5000
   adapter: postgresql
   encoding: unicode
-  username: westeros_alliances
+  username: feodalis
 
 development:
   <<: *default
-  database: westeros_alliances_dev
+  database: feodalis_dev
 
 
 # Warning: The database defined as "test" will be erased and
@@ -21,8 +21,8 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: westeros_alliances_test
+  database: feodalis_test
 
 production:
   <<: *default
-  database: westeros_alliances_prod
+  database: feodalis_prod
