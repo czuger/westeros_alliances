@@ -39,4 +39,8 @@ class HHouse < ActiveRecord::Base
     !vassal?
   end
 
+  def self.suzerains
+    HHouse.where( h_suzerain_house_id: nil )
+  end
+
 end

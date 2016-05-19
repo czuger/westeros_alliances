@@ -8,7 +8,6 @@ class AllianceBetsTest < ActiveSupport::TestCase
     GGameBoard.destroy_all
 
     @gb = GGameBoard.create!
-    @gbp = GGameBoardPlayer.create!( g_game_board: @gb )
 
     @stark, @karstark = HHouse.create_house_and_vassals( :stark, :karstark )
     @lannister, @cendermark = HHouse.create_house_and_vassals( :lannister, :cendermark )
@@ -21,51 +20,51 @@ class AllianceBetsTest < ActiveSupport::TestCase
   # end
 
   def test_bet_failure_due_to_low_bet
-    @gbp.set_bet( @stark, @lannister, 10 )
-    @gbp.resolve_bets
+    @gb.set_bet( @stark, @lannister, 10 )
+    @gb.resolve_bets
 
-    @gbp.set_bet( @greyjoy, @lannister, 10 )
-    @gbp.resolve_bets
+    @gb.set_bet( @greyjoy, @lannister, 10 )
+    @gb.resolve_bets
     # Geryjoy shouldn't be able to steal alliance due to low bet
-    assert @gbp.allied?( @lannister, @stark )
+    assert @gb.allied?( @lannister, @stark )
 
-    @gbp.set_bet( @greyjoy, @lannister, 20 )
-    @gbp.resolve_bets
+    @gb.set_bet( @greyjoy, @lannister, 20 )
+    @gb.resolve_bets
     # But now it is ok, because the bet is good enough
-    assert @gbp.allied?( @greyjoy, @lannister )
+    assert @gb.allied?( @greyjoy, @lannister )
   end
 
   def test_bet_resolutions
-    @gbp.set_bet( @stark, @lannister, 10 )
-    @gbp.set_bet( @greyjoy, @lannister, 20 )
-    @gbp.set_bet( @greyjoy, @tyrell, 20 )
-    @gbp.resolve_bets
-    assert @gbp.allied?( @greyjoy, @lannister )
-    assert @gbp.allied?( @greyjoy, @tyrell )
-    refute @gbp.allied?( @lannister, @stark )
+    @gb.set_bet( @stark, @lannister, 10 )
+    @gb.set_bet( @greyjoy, @lannister, 20 )
+    @gb.set_bet( @greyjoy, @tyrell, 20 )
+    @gb.resolve_bets
+    assert @gb.allied?( @greyjoy, @lannister )
+    assert @gb.allied?( @greyjoy, @tyrell )
+    refute @gb.allied?( @lannister, @stark )
 
-    @gbp.set_bet( @stark, @lannister, 40 )
-    @gbp.resolve_bets
-    assert @gbp.allied?( @lannister, @stark )
+    @gb.set_bet( @stark, @lannister, 40 )
+    @gb.resolve_bets
+    assert @gb.allied?( @lannister, @stark )
   end
 
   def test_bet_creation_and_replacement
-    @gbp.set_bet( @stark, @lannister, 10 )
-    assert( 10, @gbp.get_bet( @stark, @lannister ) )
+    @gb.set_bet( @stark, @lannister, 10 )
+    assert( 10, @gb.get_bet( @stark, @lannister ) )
 
-    @gbp.set_bet( @stark, @lannister, 20 )
-    assert( 20, @gbp.get_bet( @stark, @lannister ) )
+    @gb.set_bet( @stark, @lannister, 20 )
+    assert( 20, @gb.get_bet( @stark, @lannister ) )
 
-    @gbp.set_bet( @stark, @greyjoy, 30 )
-    assert( 20, @gbp.get_bet( @stark, @lannister ) )
-    assert( 30, @gbp.get_bet( @stark, @greyjoy ) )
+    @gb.set_bet( @stark, @greyjoy, 30 )
+    assert( 20, @gb.get_bet( @stark, @lannister ) )
+    assert( 30, @gb.get_bet( @stark, @greyjoy ) )
 
     # If no bet set, get bet should return nil, not raise an error
-    refute( @gbp.get_bet( @stark, @stark ) )
+    refute( @gb.get_bet( @stark, @stark ) )
 
     # only master houses can create alliances
     assert_raises RuntimeError do
-      @gbp.set_bet( @stark, @tarly, 30 )
+      @gb.set_bet( @stark, @tarly, 30 )
     end
   end
 

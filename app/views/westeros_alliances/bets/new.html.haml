@@ -1,0 +1,17 @@
+%h1
+  Bets#new
+
+= form_tag game_board_bets_path do
+
+  %table
+    - checked = true
+    - HHouse.suzerains.each do |house|
+      %tr
+        %td= radio_button_tag 'asking_house', house.id, checked
+        %td= house.code_name
+        %td= number_field_tag "houses_bets[#{house.id}]", ( @bets[ @asking_house.id ][ house.id ] if @bets[ @asking_house.id ] )
+      - checked = false
+
+  = submit_tag :submit
+
+= hidden_field_tag :bets, @bets

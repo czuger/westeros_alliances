@@ -1,4 +1,4 @@
 module WesterosAlliances
-  module ApplicationHelper
+  module BetsHelper
   end
 end

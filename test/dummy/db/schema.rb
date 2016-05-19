@@ -38,51 +38,47 @@ ActiveRecord::Schema.define(version: 20160518094932) do
   add_index "h_houses", ["h_suzerain_house_id"], name: "index_h_houses_on_h_suzerain_house_id"
 
   create_table "westeros_alliances_al_bets", force: :cascade do |t|
-    t.integer  "g_game_board_player_id",             null: false
-    t.integer  "h_house_id",                         null: false
-    t.integer  "h_target_house_id",                  null: false
-    t.integer  "bet",                    default: 0, null: false
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
+    t.integer  "g_game_board_id",               null: false
+    t.integer  "h_house_id",                    null: false
+    t.integer  "h_target_house_id",             null: false
+    t.integer  "bet",               default: 0, null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
   end
 
-  add_index "westeros_alliances_al_bets", ["g_game_board_player_id", "h_house_id", "h_target_house_id"], name: "al_bets_unique_index", unique: true
+  add_index "westeros_alliances_al_bets", ["g_game_board_id", "h_house_id", "h_target_house_id"], name: "al_bets_unique_index", unique: true
 
   create_table "westeros_alliances_al_houses", force: :cascade do |t|
-    t.integer  "g_game_board_player_id",                 null: false
-    t.integer  "h_house_id",                             null: false
-    t.boolean  "minor_alliance_member",  default: false
-    t.integer  "last_bet",                               null: false
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
+    t.integer  "g_game_board_id",                       null: false
+    t.integer  "h_house_id",                            null: false
+    t.boolean  "minor_alliance_member", default: false
+    t.integer  "last_bet",                              null: false
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
   end
 
-  add_index "westeros_alliances_al_houses", ["g_game_board_player_id", "h_house_id"], name: "al_houses_unique_index", unique: true
+  add_index "westeros_alliances_al_houses", ["g_game_board_id", "h_house_id"], name: "al_houses_unique_index", unique: true
 
   create_table "westeros_alliances_al_logs", force: :cascade do |t|
-    t.integer  "g_game_board_id",   null: false
-    t.integer  "h_house_id",        null: false
-    t.integer  "h_target_house_id", null: false
-    t.integer  "log_code",          null: false
-    t.string   "alliance_details",  null: false
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+    t.integer  "g_game_board_id",  null: false
+    t.integer  "log_code",         null: false
+    t.text     "alliance_details"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
   end
 
   add_index "westeros_alliances_al_logs", ["g_game_board_id"], name: "index_westeros_alliances_al_logs_on_g_game_board_id"
-  add_index "westeros_alliances_al_logs", ["h_house_id"], name: "index_westeros_alliances_al_logs_on_h_house_id"
-  add_index "westeros_alliances_al_logs", ["h_target_house_id"], name: "index_westeros_alliances_al_logs_on_h_target_house_id"
 
   create_table "westeros_alliances_al_relationships", force: :cascade do |t|
-    t.integer  "g_game_board_player_id", null: false
-    t.integer  "h_house_id",             null: false
-    t.integer  "h_peer_house_id",        null: false
-    t.string   "type",                   null: false
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.integer  "g_game_board_id", null: false
+    t.integer  "h_house_id",      null: false
+    t.integer  "h_peer_house_id", null: false
+    t.string   "type",            null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
   end
 
-  add_index "westeros_alliances_al_relationships", ["g_game_board_player_id", "h_house_id", "h_peer_house_id"], name: "al_relationships_unique_index", unique: true
+  add_index "westeros_alliances_al_relationships", ["g_game_board_id", "h_house_id", "h_peer_house_id"], name: "al_relationships_unique_index", unique: true
   add_index "westeros_alliances_al_relationships", ["type"], name: "index_westeros_alliances_al_relationships_on_type"
 
 end

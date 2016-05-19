@@ -8,13 +8,26 @@ module WesterosAlliances
       OLD_BET_MUL = 2
 
       # Set a new bet on a house, if the bet already exist, it is replaced
-      # TODO : Add logs bet + test logs
       def resolve_bets
         ActiveRecord::Base.transaction do
-          AlBet.where( g_game_board_player_id: id ).distinct.pluck( :h_target_house_id ).each do |target_house_id|
+          AlBet.where( g_game_board_id: id ).distinct.pluck( :h_target_house_id ).each do |target_house_id|
+
             old_bet = al_houses.where( h_house_id: target_house_id ).pluck( :last_bet ).first || 1
-            best_bet = al_bets.where( h_target_house_id: target_house_id ).where( 'bet >= ?', old_bet * OLD_BET_MUL ).order( 'bet DESC' ).first
-            create_alliance( best_bet.h_house, best_bet.h_target_house, best_bet.bet ) if best_bet
+            min_bet = old_bet * OLD_BET_MUL
+
+            best_bet = al_bets.where( h_target_house_id: target_house_id ).where( 'bet >= ?', min_bet ).order( 'bet DESC' ).first
+            target_house = HHouse.find_by( id: target_house_id )
+
+            unless best_bet
+              westeros_alliances_al_logs.create!( g_game_board_id: id, log_code: WesterosAlliances::AlLog::BEST_BET_TOO_LOW,
+                alliance_details: { min_bet: min_bet, target_house: target_house.code_name, bet_detail: get_bet_details_as_hash( target_house ) } )
+            else
+              create_alliance( best_bet.h_house, best_bet.h_target_house, best_bet.bet )
+              westeros_alliances_al_logs.create!( g_game_board_id: id, log_code: WesterosAlliances::AlLog::ALLIANCE_CREATION,
+                alliance_details: { best_bet: best_bet.bet, winning_house: best_bet.h_house.code_name, target_house: target_house.code_name,
+                bet_detail: get_bet_details_as_hash( target_house ) } )
+            end
+
           end
           al_bets.delete_all
         end
@@ -33,6 +46,14 @@ module WesterosAlliances
 
       def get_bet( master_house, target_house )
         al_bets.where( h_house_id: master_house.id, h_target_house_id: target_house.id ).pluck( :bet ).first
+      end
+
+      def get_bet_details_as_hash( target_house )
+        result = []
+        al_bets.includes( :h_house ).where( h_target_house_id: target_house.id ).order( :bet ).each do |bet|
+          result << { asking_house: bet.h_house.code_name, bet: bet.bet }
+        end
+        result
       end
 
     end

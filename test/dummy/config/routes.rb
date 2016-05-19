@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
 
-  mount WesterosAlliances::Engine => "/feodalis"
+  mount WesterosAlliances::Engine => "/westeros_alliances"
+
 end

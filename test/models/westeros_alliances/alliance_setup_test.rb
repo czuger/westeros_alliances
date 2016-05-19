@@ -9,7 +9,6 @@ class AllianceSetupTest < ActiveSupport::TestCase
     GGameBoard.destroy_all
 
     @gb = GGameBoard.create!
-    @gbp = GGameBoardPlayer.create!( g_game_board: @gb )
 
     @stark, @karstark = HHouse.create_house_and_vassals( :stark, :karstark )
     @lannister, @cendermark = HHouse.create_house_and_vassals( :lannister, :cendermark )
@@ -24,89 +23,89 @@ class AllianceSetupTest < ActiveSupport::TestCase
   # end
 
   def test_old_allies_becomes_ennemies
-    @gbp.create_alliance( @lannister, @tyrell, 1 )
-    @gbp.set_enemies( @stark, @lannister )
-    @gbp.create_alliance( @stark, @tyrell, 1 )
+    @gb.create_alliance( @lannister, @tyrell, 1 )
+    @gb.set_enemies( @stark, @lannister )
+    @gb.create_alliance( @stark, @tyrell, 1 )
 
-    # pp @gbp.al_alliances.all.map{ |e| [ e.h_house.code_name, e.h_peer_house.code_name ].join( ', ' ) }.to_a
-    # pp @gbp.al_enemies.all.map{ |e| [ e.h_house.code_name, e.h_peer_house.code_name ].join( ', ' ) }.to_a
+    # pp @gb.al_alliances.all.map{ |e| [ e.h_house.code_name, e.h_peer_house.code_name ].join( ', ' ) }.to_a
+    # pp @gb.al_enemies.all.map{ |e| [ e.h_house.code_name, e.h_peer_house.code_name ].join( ', ' ) }.to_a
   end
 
   def test_allies_list
-    @gbp.create_alliance( @stark, @greyjoy, 1 )
-    @gbp2 = GGameBoardPlayer.create!( g_game_board: @gb )
-    @gbp2.set_enemies( @stark, @lannister )
-    @gbp2.create_alliance( @stark, @greyjoy, 1 )
-    assert_includes( @gbp.allies( @stark ).pluck( :id ), @greyjoy.id )
-    assert_includes( @gbp.allies( @stark ).pluck( :id ), @pyk.id )
-    refute_includes( @gbp.allies( @stark ).pluck( :id ), @stark.id )
-    @gbp.create_alliance( @stark, @lannister, 1 )
-    assert_includes( @gbp.allies( @lannister ).pluck( :id ), @greyjoy.id )
-    assert_includes( @gbp.allies( @lannister ).pluck( :id ), @pyk.id )
-    assert_includes( @gbp.allies( @lannister ).pluck( :id ), @stark.id )
+    @gb.create_alliance( @stark, @greyjoy, 1 )
+    @gb2 = GGameBoard.create!
+    @gb2.set_enemies( @stark, @lannister )
+    @gb2.create_alliance( @stark, @greyjoy, 1 )
+    assert_includes( @gb.allies( @stark ).pluck( :id ), @greyjoy.id )
+    assert_includes( @gb.allies( @stark ).pluck( :id ), @pyk.id )
+    refute_includes( @gb.allies( @stark ).pluck( :id ), @stark.id )
+    @gb.create_alliance( @stark, @lannister, 1 )
+    assert_includes( @gb.allies( @lannister ).pluck( :id ), @greyjoy.id )
+    assert_includes( @gb.allies( @lannister ).pluck( :id ), @pyk.id )
+    assert_includes( @gb.allies( @lannister ).pluck( :id ), @stark.id )
   end
 
   def test_alliance_separation_through_game_board
-    @gbp.create_alliance( @stark, @lannister, 0 )
-    assert @gbp.allied?( @cendermark, @stark )
-    @gbp2 = GGameBoardPlayer.create!( g_game_board: @gb )
-    refute @gbp2.allied?( @cendermark, @stark )
+    @gb.create_alliance( @stark, @lannister, 0 )
+    assert @gb.allied?( @cendermark, @stark )
+    @gb2 = GGameBoard.create!
+    refute @gb2.allied?( @cendermark, @stark )
   end
 
   def test_alliances_stealing
-    @gbp.create_alliance( @stark, @lannister, 0 )
-    @gbp.create_alliance( @stark, @greyjoy, 0 )
-    @gbp.create_alliance( @tyrell, @greyjoy, 0 )
-    assert @gbp.allied?( @cendermark, @stark )
-    refute @gbp.allied?( @pyk, @stark )
-    refute @gbp.allied?( @pyk, @cendermark )
-    assert @gbp.allied?( @pyk, @tarly )
+    @gb.create_alliance( @stark, @lannister, 0 )
+    @gb.create_alliance( @stark, @greyjoy, 0 )
+    @gb.create_alliance( @tyrell, @greyjoy, 0 )
+    assert @gb.allied?( @cendermark, @stark )
+    refute @gb.allied?( @pyk, @stark )
+    refute @gb.allied?( @pyk, @cendermark )
+    assert @gb.allied?( @pyk, @tarly )
   end
 
   def test_ennemies_with_alliances_stealing
-    @gbp.create_alliance( @stark, @lannister, 0 )
-    @gbp.create_alliance( @tyrell, @greyjoy, 0 )
-    @gbp.set_enemies( @stark, @tyrell )
-    assert @gbp.enemies?( @stark, @greyjoy )
-    assert @gbp.enemies?( @stark, @greyjoy )
-    @gbp.create_alliance( @stark, @greyjoy, 0 )
-    refute @gbp.enemies?( @stark, @greyjoy )
-    assert @gbp.enemies?( @tyrell, @greyjoy )
+    @gb.create_alliance( @stark, @lannister, 0 )
+    @gb.create_alliance( @tyrell, @greyjoy, 0 )
+    @gb.set_enemies( @stark, @tyrell )
+    assert @gb.enemies?( @stark, @greyjoy )
+    assert @gb.enemies?( @stark, @greyjoy )
+    @gb.create_alliance( @stark, @greyjoy, 0 )
+    refute @gb.enemies?( @stark, @greyjoy )
+    assert @gb.enemies?( @tyrell, @greyjoy )
   end
 
   def test_advanced_alliances
-    @gbp.create_alliance( @stark, @lannister, 0 )
-    @gbp.create_alliance( @stark, @greyjoy, 0 )
+    @gb.create_alliance( @stark, @lannister, 0 )
+    @gb.create_alliance( @stark, @greyjoy, 0 )
     assert_raises {
-      @gbp.create_alliance( @lannister, @tyrell, 0 )
+      @gb.create_alliance( @lannister, @tyrell, 0 )
     }
-    assert @gbp.allied?( @cendermark, @stark )
-    assert @gbp.allied?( @pyk, @cendermark )
-    assert @gbp.allied?( @pyk, @stark )
-    refute @gbp.allied?( @pyk, @tarly )
+    assert @gb.allied?( @cendermark, @stark )
+    assert @gb.allied?( @pyk, @cendermark )
+    assert @gb.allied?( @pyk, @stark )
+    refute @gb.allied?( @pyk, @tarly )
   end
 
   def test_basic_alliances
     assert_raises {
-      @gbp.create_alliance( @stark, @cendermark, 0 )
+      @gb.create_alliance( @stark, @cendermark, 0 )
     }
     assert_raises {
-      @gbp.create_alliance( @cendermark, @stark, 0 )
+      @gb.create_alliance( @cendermark, @stark, 0 )
     }
-    @gbp.create_alliance( @stark, @lannister, 0 )
+    @gb.create_alliance( @stark, @lannister, 0 )
 
     # pp WesterosAlliances::AlLog.all
 
-    assert @gbp.allied?( @stark, @cendermark )
-    assert @gbp.allied?( @cendermark, @stark )
-    assert @gbp.allied?( @karstark, @cendermark )
+    assert @gb.allied?( @stark, @cendermark )
+    assert @gb.allied?( @cendermark, @stark )
+    assert @gb.allied?( @karstark, @cendermark )
     assert_equal(
-      [ @lannister, @cendermark, @karstark ].map{ |e| e.id }.sort, @gbp.allies( @stark ).map{ |e| e.id }.sort )
+      [ @lannister, @cendermark, @karstark ].map{ |e| e.id }.sort, @gb.allies( @stark ).map{ |e| e.id }.sort )
 
-    refute( @gbp.minor_alliance_member?( @stark ) )
-    refute( @gbp.minor_alliance_member?( @tarly ) )
+    refute( @gb.minor_alliance_member?( @stark ) )
+    refute( @gb.minor_alliance_member?( @tarly ) )
 
-    assert( @gbp.minor_alliance_member?( @cendermark ) )
+    assert( @gb.minor_alliance_member?( @cendermark ) )
   end
 
   def test_vassal_suzerain
@@ -117,9 +116,9 @@ class AllianceSetupTest < ActiveSupport::TestCase
   end
 
   def test_alliances_hash
-    @gbp.create_alliance( @stark, @lannister, 1 )
-    @gbp.set_enemies( @stark, @greyjoy )
-    result_hash = @gbp.alliances_hash( @stark )
+    @gb.create_alliance( @stark, @lannister, 1 )
+    @gb.set_enemies( @stark, @greyjoy )
+    result_hash = @gb.alliances_hash( @stark )
     assert_equal( 4, result_hash[ :allies ].count )
     assert_equal( 2, result_hash[ :enemies ].count )
     assert_equal( 2, result_hash[ :neutrals ].count )

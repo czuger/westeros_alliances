@@ -15,4 +15,6 @@ gemspec
 
 # gem 'factory_girl_rails'
 
-gem 'rename', group: [ :development ]
+gem 'haml-rails'
+gem 'jquery-rails'
+gem 'jquery-turbolinks'

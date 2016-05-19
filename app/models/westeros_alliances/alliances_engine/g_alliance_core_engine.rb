@@ -72,14 +72,6 @@ module WesterosAlliances
               al_enemies.where( h_house_id: house_a_enemy_id, h_peer_house_id: minor_ally_id ).first_or_create!
             end
           end
-
-          # And log the creation
-          gb = g_game_board
-          gb.westeros_alliances_al_logs.create!( g_game_board: gb, h_house: house_a, h_target_house: house_b,
-                                                 log_code: WesterosAlliances::AlLog::ALLIANCE_CREATION,
-                                                 alliance_details: { last_bet: last_bet }
-          )
-
         end
       end
     end
