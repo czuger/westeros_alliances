@@ -2,7 +2,7 @@ class RootModels < ActiveRecord::Migration
   def change
 
     create_table :g_game_boards do |t|
-      t.integer :turn
+      t.integer :turn, null: false, default: 1
       t.timestamps null: false
     end
 
@@ -32,8 +32,8 @@ class RootModels < ActiveRecord::Migration
     create_table :westeros_alliances_al_houses do |table|
       table.references :g_game_board, null: false, foreign_key: true
       table.references :h_house, null: false, foreign_key: true
-      table.boolean :minor_alliance_member, default: false
-      table.integer :last_bet, null: false
+      table.boolean :minor_alliance_member, default: true
+      table.integer :last_bet, null: false, default: 0
       table.timestamps null: false
     end
     add_index :westeros_alliances_al_houses, [ :g_game_board_id, :h_house_id ], unique: true, :name => 'al_houses_unique_index'

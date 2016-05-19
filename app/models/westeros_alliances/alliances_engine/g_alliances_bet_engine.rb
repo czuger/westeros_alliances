@@ -13,7 +13,7 @@ module WesterosAlliances
           AlBet.where( g_game_board_id: id ).distinct.pluck( :h_target_house_id ).each do |target_house_id|
 
             old_bet = al_houses.where( h_house_id: target_house_id ).pluck( :last_bet ).first || 1
-            min_bet = old_bet * OLD_BET_MUL
+            min_bet = min_bet_value( old_bet )
 
             best_bet = al_bets.where( h_target_house_id: target_house_id ).where( 'bet >= ?', min_bet ).order( 'bet DESC' ).first
             target_house = HHouse.find_by( id: target_house_id )
@@ -31,6 +31,10 @@ module WesterosAlliances
           end
           al_bets.delete_all
         end
+      end
+
+      def min_bet_value( old_bet )
+        old_bet * OLD_BET_MUL
       end
 
       # Set a new bet on a house, if the bet already exist, it is replaced

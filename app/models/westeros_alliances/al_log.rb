@@ -7,5 +7,6 @@ module WesterosAlliances
     belongs_to :g_game_board
 
     serialize :alliance_details
+
   end
 end

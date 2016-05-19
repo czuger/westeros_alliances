@@ -5,13 +5,13 @@
 
   %table
     - checked = true
-    - HHouse.suzerains.each do |house|
+    - @al_houses.each do |al_house|
       %tr
-        %td= radio_button_tag 'asking_house', house.id, checked
-        %td= house.code_name
-        %td= number_field_tag "houses_bets[#{house.id}]", ( @bets[ @asking_house.id ][ house.id ] if @bets[ @asking_house.id ] )
+        %td= ( radio_button_tag( 'asking_house_id', al_house.h_house_id, checked ) unless al_house.minor_alliance_member )
+        %td= al_house.h_house.code_name
+        %td= ( number_field_tag( "houses_bets[#{al_house.h_house_id}]", @bets[ @asking_house.id ][ al_house.h_house_id ], class: :house_bets_inputs ) if al_house.minor_alliance_member )
       - checked = false
 
   = submit_tag :submit
 
-= hidden_field_tag :bets, @bets
+= hidden_field_tag :bets, @bets.to_json

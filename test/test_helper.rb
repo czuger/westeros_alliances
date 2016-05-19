@@ -1,8 +1,10 @@
 # Configure Rails Environment
 ENV["RAILS_ENV"] = "test"
 
+# require File.expand_path("../../test/dummy/config/environment.rb",  __FILE__)
+# ActiveRecord::Migrator.migrations_paths = [File.expand_path("../../test/dummy/db/migrate", __FILE__)]
+
 require File.expand_path("../../test/dummy/config/environment.rb",  __FILE__)
-ActiveRecord::Migrator.migrations_paths = [File.expand_path("../../test/dummy/db/migrate", __FILE__)]
 ActiveRecord::Migrator.migrations_paths << File.expand_path('../../db/migrate', __FILE__)
 require "rails/test_help"
 
@@ -19,3 +21,7 @@ if ActiveSupport::TestCase.respond_to?(:fixture_path=)
   ActionDispatch::IntegrationTest.fixture_path = ActiveSupport::TestCase.fixture_path
   ActiveSupport::TestCase.fixtures :all
 end
+
+# Load factories
+ENGINE_RAILS_ROOT=File.join(File.dirname(__FILE__), '../')
+Dir[File.join(ENGINE_RAILS_ROOT, "test/factories/**/*.rb")].each {|f| require f }

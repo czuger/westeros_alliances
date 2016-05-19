@@ -108,6 +108,13 @@ class AllianceSetupTest < ActiveSupport::TestCase
     assert( @gb.minor_alliance_member?( @cendermark ) )
   end
 
+  def test_last_bet_set_after_alliance_creation
+    @gb.create_alliance( @stark, @lannister, 20 )
+    assert 20, @gb.al_houses.where( h_house_id: @lannister.id ).first.last_bet
+    @gb.create_alliance( @greyjoy, @lannister, 40 )
+    assert 40, @gb.al_houses.where( h_house_id: @lannister.id ).first.last_bet
+  end
+
   def test_vassal_suzerain
     assert @karstark.vassal?
     assert @stark.suzerain?

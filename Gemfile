@@ -15,6 +15,11 @@ gemspec
 
 # gem 'factory_girl_rails'
 
+gem 'pg'
+
 gem 'haml-rails'
 gem 'jquery-rails'
 gem 'jquery-turbolinks'
+
+gem 'factory_girl'
+gem 'factory_girl_rails'

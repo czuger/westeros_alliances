@@ -13,18 +13,21 @@
 
 ActiveRecord::Schema.define(version: 20160518094932) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "g_game_board_players", force: :cascade do |t|
     t.integer  "g_game_board_id", null: false
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
   end
 
-  add_index "g_game_board_players", ["g_game_board_id"], name: "index_g_game_board_players_on_g_game_board_id"
+  add_index "g_game_board_players", ["g_game_board_id"], name: "index_g_game_board_players_on_g_game_board_id", using: :btree
 
   create_table "g_game_boards", force: :cascade do |t|
-    t.integer  "turn"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "turn",       default: 1, null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
   end
 
   create_table "h_houses", force: :cascade do |t|
@@ -34,8 +37,8 @@ ActiveRecord::Schema.define(version: 20160518094932) do
     t.datetime "updated_at",          null: false
   end
 
-  add_index "h_houses", ["code_name"], name: "index_h_houses_on_code_name", unique: true
-  add_index "h_houses", ["h_suzerain_house_id"], name: "index_h_houses_on_h_suzerain_house_id"
+  add_index "h_houses", ["code_name"], name: "index_h_houses_on_code_name", unique: true, using: :btree
+  add_index "h_houses", ["h_suzerain_house_id"], name: "index_h_houses_on_h_suzerain_house_id", using: :btree
 
   create_table "westeros_alliances_al_bets", force: :cascade do |t|
     t.integer  "g_game_board_id",               null: false
@@ -46,18 +49,18 @@ ActiveRecord::Schema.define(version: 20160518094932) do
     t.datetime "updated_at",                    null: false
   end
 
-  add_index "westeros_alliances_al_bets", ["g_game_board_id", "h_house_id", "h_target_house_id"], name: "al_bets_unique_index", unique: true
+  add_index "westeros_alliances_al_bets", ["g_game_board_id", "h_house_id", "h_target_house_id"], name: "al_bets_unique_index", unique: true, using: :btree
 
   create_table "westeros_alliances_al_houses", force: :cascade do |t|
-    t.integer  "g_game_board_id",                       null: false
-    t.integer  "h_house_id",                            null: false
-    t.boolean  "minor_alliance_member", default: false
-    t.integer  "last_bet",                              null: false
-    t.datetime "created_at",                            null: false
-    t.datetime "updated_at",                            null: false
+    t.integer  "g_game_board_id",                      null: false
+    t.integer  "h_house_id",                           null: false
+    t.boolean  "minor_alliance_member", default: true
+    t.integer  "last_bet",              default: 0,    null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
   end
 
-  add_index "westeros_alliances_al_houses", ["g_game_board_id", "h_house_id"], name: "al_houses_unique_index", unique: true
+  add_index "westeros_alliances_al_houses", ["g_game_board_id", "h_house_id"], name: "al_houses_unique_index", unique: true, using: :btree
 
   create_table "westeros_alliances_al_logs", force: :cascade do |t|
     t.integer  "g_game_board_id",  null: false
@@ -67,7 +70,7 @@ ActiveRecord::Schema.define(version: 20160518094932) do
     t.datetime "updated_at",       null: false
   end
 
-  add_index "westeros_alliances_al_logs", ["g_game_board_id"], name: "index_westeros_alliances_al_logs_on_g_game_board_id"
+  add_index "westeros_alliances_al_logs", ["g_game_board_id"], name: "index_westeros_alliances_al_logs_on_g_game_board_id", using: :btree
 
   create_table "westeros_alliances_al_relationships", force: :cascade do |t|
     t.integer  "g_game_board_id", null: false
@@ -78,7 +81,18 @@ ActiveRecord::Schema.define(version: 20160518094932) do
     t.datetime "updated_at",      null: false
   end
 
-  add_index "westeros_alliances_al_relationships", ["g_game_board_id", "h_house_id", "h_peer_house_id"], name: "al_relationships_unique_index", unique: true
-  add_index "westeros_alliances_al_relationships", ["type"], name: "index_westeros_alliances_al_relationships_on_type"
+  add_index "westeros_alliances_al_relationships", ["g_game_board_id", "h_house_id", "h_peer_house_id"], name: "al_relationships_unique_index", unique: true, using: :btree
+  add_index "westeros_alliances_al_relationships", ["type"], name: "index_westeros_alliances_al_relationships_on_type", using: :btree
 
+  add_foreign_key "g_game_board_players", "g_game_boards"
+  add_foreign_key "h_houses", "h_houses", column: "h_suzerain_house_id"
+  add_foreign_key "westeros_alliances_al_bets", "g_game_boards"
+  add_foreign_key "westeros_alliances_al_bets", "h_houses"
+  add_foreign_key "westeros_alliances_al_bets", "h_houses", column: "h_target_house_id"
+  add_foreign_key "westeros_alliances_al_houses", "g_game_boards"
+  add_foreign_key "westeros_alliances_al_houses", "h_houses"
+  add_foreign_key "westeros_alliances_al_logs", "g_game_boards"
+  add_foreign_key "westeros_alliances_al_relationships", "g_game_boards"
+  add_foreign_key "westeros_alliances_al_relationships", "h_houses"
+  add_foreign_key "westeros_alliances_al_relationships", "h_houses", column: "h_peer_house_id"
 end

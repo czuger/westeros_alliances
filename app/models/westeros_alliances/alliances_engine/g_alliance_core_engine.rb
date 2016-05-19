@@ -25,6 +25,13 @@ module WesterosAlliances
         al_house&.minor_alliance_member
       end
 
+      # Set if an alliance master can initiate alliance negotiations (a player) or not (a NPC)
+      def set_alliance_negotiation_rights( house, negotiation_rights )
+        al_house = al_houses.where( h_house_id: house.id ).first_or_initialize
+        al_house.minor_alliance_member = !negotiation_rights
+        al_house.save!
+      end
+
       # Create an alliance between two houses
       def
       create_alliance( house_a, house_b, last_bet )
@@ -39,7 +46,6 @@ module WesterosAlliances
           # Minor are included for coherence
           minor_allies.each do |ally|
             al_house = al_houses.where( h_house_id: ally.id ).first_or_initialize
-            al_house.minor_alliance_member = true
             al_house.last_bet = last_bet
             al_house.save!
           end
