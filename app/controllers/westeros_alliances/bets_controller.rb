@@ -3,14 +3,6 @@ require_dependency "westeros_alliances/application_controller"
 module WesterosAlliances
   class BetsController < ApplicationController
 
-    def logs
-      @gb = GGameBoard.find( params[ :game_board_id ] )
-      @logs = @gb.westeros_alliances_al_logs.order( 'updated_at DESC' )
-    end
-
-    def show
-    end
-
     def new
       @gb = GGameBoard.find( params[ :game_board_id ] )
       @asking_house = HHouse.first
@@ -47,7 +39,7 @@ module WesterosAlliances
         end
       end
 
-      redirect_to new_game_board_bets_path
+      redirect_to new_game_board_bet_path
     end
 
   end

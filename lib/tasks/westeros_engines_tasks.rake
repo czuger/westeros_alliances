@@ -2,8 +2,9 @@ namespace :westeros_alliances do
 
   desc 'Setup basic datas for manual tests'
   task :set_base_datas => :environment do
-    HHouse.destroy_all
     GGameBoard.destroy_all
+    HHouse.vassals.destroy_all
+    HHouse.suzerains.destroy_all
 
     @stark = HHouse.create_house_and_vassals( :stark, :karstark, :bolton, :corbois ).first
     @greyjoy = HHouse.create_house_and_vassals( :greyjoy, :botley, :harloi, :salfalaises ).first
@@ -16,6 +17,7 @@ namespace :westeros_alliances do
     gb.set_alliance_negotiation_rights( @greyjoy, false )
     gb.set_alliance_negotiation_rights( @tyrell, false)
 
+    gb.set_enemies( @stark, @lannister )
 
   end
 
@@ -24,6 +26,7 @@ namespace :westeros_alliances do
     GGameBoard.all.each do |gb|
       ActiveRecord::Base.transaction do
         gb.increment( :turn )
+        gb.save!
         gb.resolve_bets
       end
     end

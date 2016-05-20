@@ -43,4 +43,8 @@ class HHouse < ActiveRecord::Base
     HHouse.where( h_suzerain_house_id: nil )
   end
 
+  def self.vassals
+    HHouse.where.not( h_suzerain_house_id: nil )
+  end
+
 end

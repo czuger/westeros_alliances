@@ -1,8 +1,9 @@
 WesterosAlliances::Engine.routes.draw do
 
   resources :game_board, only: []  do
-    resource :bets, only: [ :show, :new, :create ] do
-      get :logs
+    resources :bets, only: [ :new, :create ]
+    resource :alliances, only: [ :show ] do
+      get :log
     end
   end
 

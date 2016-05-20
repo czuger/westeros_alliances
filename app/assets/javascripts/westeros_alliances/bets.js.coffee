@@ -8,13 +8,14 @@ $(document).ready ->
 
     bets = $.parseJSON( $('#bets').val() );
     house_bets = bets[ asking_house_id ]
-    console.log( house_bets )
+    # console.log( house_bets )
 
     $( '.house_bets_inputs' ).val( '' )
-    console.log( $( '.house_bets_inputs' ) )
+    # console.log( $( '.house_bets_inputs' ) )
 
     for house_id, bet of house_bets
-      console.log( house_id, bet )
-      console.log( $( "#houses_bets_#{house_id}" ) )
-      $( "#houses_bets_#{house_id}" ).val( "#{bet}" )
+      # console.log( house_id, bet )
+      # console.log( $( "#houses_bets_#{house_id}" ) )
+      if bet > 0
+        $( "#houses_bets_#{house_id}" ).val( "#{bet}" )
 

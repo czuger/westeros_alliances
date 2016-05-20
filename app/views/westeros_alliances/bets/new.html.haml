@@ -9,7 +9,7 @@
       %tr
         %td= ( radio_button_tag( 'asking_house_id', al_house.h_house_id, checked ) unless al_house.minor_alliance_member )
         %td= al_house.h_house.code_name
-        %td= ( number_field_tag( "houses_bets[#{al_house.h_house_id}]", @bets[ @asking_house.id ][ al_house.h_house_id ], class: :house_bets_inputs ) if al_house.minor_alliance_member )
+        %td= ( number_field_tag( "houses_bets[#{al_house.h_house_id}]", current_bet( al_house ), class: :house_bets_inputs ) if al_house.minor_alliance_member )
       - checked = false
 
   = submit_tag :submit

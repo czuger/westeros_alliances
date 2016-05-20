@@ -18,6 +18,7 @@ gemspec
 gem 'pg'
 
 gem 'haml-rails'
+gem 'sass-rails'
 gem 'jquery-rails'
 gem 'jquery-turbolinks'
 

@@ -66,6 +66,7 @@ ActiveRecord::Schema.define(version: 20160518094932) do
     t.integer  "g_game_board_id",  null: false
     t.integer  "log_code",         null: false
     t.text     "alliance_details"
+    t.integer  "turn",             null: false
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
   end

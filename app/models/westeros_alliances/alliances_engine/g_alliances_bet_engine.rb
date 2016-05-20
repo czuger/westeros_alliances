@@ -18,16 +18,19 @@ module WesterosAlliances
             best_bet = al_bets.where( h_target_house_id: target_house_id ).where( 'bet >= ?', min_bet ).order( 'bet DESC' ).first
             target_house = HHouse.find_by( id: target_house_id )
 
-            unless best_bet
-              westeros_alliances_al_logs.create!( g_game_board_id: id, log_code: WesterosAlliances::AlLog::BEST_BET_TOO_LOW,
-                alliance_details: { min_bet: min_bet, target_house: target_house.code_name, bet_detail: get_bet_details_as_hash( target_house ) } )
-            else
-              create_alliance( best_bet.h_house, best_bet.h_target_house, best_bet.bet )
-              westeros_alliances_al_logs.create!( g_game_board_id: id, log_code: WesterosAlliances::AlLog::ALLIANCE_CREATION,
-                alliance_details: { best_bet: best_bet.bet, winning_house: best_bet.h_house.code_name, target_house: target_house.code_name,
-                bet_detail: get_bet_details_as_hash( target_house ) } )
+            if best_bet && best_bet.bet > 0 # 0 bets are not processed
+              unless best_bet
+                westeros_alliances_al_logs.create!( g_game_board_id: id, log_code: WesterosAlliances::AlLog::BEST_BET_TOO_LOW,
+                  alliance_details: { min_bet: min_bet, target_house: target_house.code_name, bet_detail: get_bet_details_as_hash( target_house ) },
+                  turn: turn )
+                # TODO : handle bet equality (shouldn't create alliance instead, log it)
+              else
+                create_alliance( best_bet.h_house, best_bet.h_target_house, best_bet.bet )
+                westeros_alliances_al_logs.create!( g_game_board_id: id, log_code: WesterosAlliances::AlLog::ALLIANCE_CREATION,
+                   alliance_details: { best_bet: best_bet.bet, winning_house: best_bet.h_house.code_name, target_house: target_house.code_name,
+                   bet_detail: get_bet_details_as_hash( target_house ) }, turn: turn )
+              end
             end
-
           end
           al_bets.delete_all
         end
