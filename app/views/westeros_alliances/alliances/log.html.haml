@@ -9,14 +9,17 @@
     %th
       Best bet
     %th
+      Min bet
+    %th
       Target house
     %th
       Winning house
-  - @logs.where( log_code: 1 ).each do |log|
+  - @logs.each do |log|
     %tr
       %td= WesterosAlliances::AlLog.al_log_code_to_string( log.log_code )
       %td= log.turn
       %td= log.alliance_details[ :best_bet ]
+      %td= log.alliance_details[ :min_bet ]
       %td= log.alliance_details[ :target_house ]
       %td= log.alliance_details[ :winning_house ]
       %td= log.alliance_details[ :bet_detail ].map{ |e| "#{e[:asking_house]} for #{e[:bet]}" }.join( ', ' )

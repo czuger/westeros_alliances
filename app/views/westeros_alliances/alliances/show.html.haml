@@ -11,5 +11,3 @@
       %th= suzerain.code_name
       - @alliances_hash[ suzerain.id ].each do |alliance_status|
         %td{ class: "alliance_status_#{alliance_status}" }= alliance_status
-
--# TODO : create a table for missed bets
