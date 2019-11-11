@@ -5,6 +5,8 @@
 
 This dev is designed to be included in a bigger project. It's an old project about game of thrones I have to finalize.
 
+Project currently abandoned.
+
 ## Usage
 
 ```ruby

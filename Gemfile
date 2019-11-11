@@ -15,6 +15,8 @@ gemspec
 
 # gem 'factory_girl_rails'
 
+# Have not time to fix all gems issues
+
 gem 'pg'
 
 gem 'haml-rails'
@@ -24,3 +26,7 @@ gem 'jquery-turbolinks'
 
 gem 'factory_girl'
 gem 'factory_girl_rails'
+
+gem 'haml', '>= 5.0.0'
+gem 'nokogiri', '>= 1.10.4'
+gem 'actionview', '>= 4.2.11.1'
